@@ -1,0 +1,157 @@
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+
+import { ErrorBanner } from "../components/ui/ErrorBanner";
+import { TechBadge } from "../components/ui/TechBadge";
+import { ApiError } from "../services/api";
+import { portfolioApi } from "../services/portfolio";
+import type { PublicProject } from "../types";
+
+export function PublicProjectPage() {
+  const { username, slug } = useParams<{ username: string; slug: string }>();
+  const [data, setData] = useState<PublicProject | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!username || !slug) return;
+    setLoading(true);
+    portfolioApi
+      .getPublicProject(username, slug)
+      .then(setData)
+      .catch((err) =>
+        setError(err instanceof ApiError && err.status === 404 ? "not-found" : "Failed to load project."),
+      )
+      .finally(() => setLoading(false));
+  }, [username, slug]);
+
+  useEffect(() => {
+    if (data) {
+      document.title = `${data.project.title} — ${data.username}`;
+    }
+    return () => {
+      document.title = "Portfolio Platform — Show your real work";
+    };
+  }, [data]);
+
+  if (loading) {
+    return (
+      <div className="page-loading">
+        <div className="spinner" />
+      </div>
+    );
+  }
+
+  if (error === "not-found") {
+    return (
+      <div className="public-404 container">
+        <h1>Project not found</h1>
+        <p>This project does not exist or is not published.</p>
+        <Link to={`/${username}`} className="btn btn-primary">
+          Back to portfolio
+        </Link>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="container" style={{ paddingTop: 40 }}>
+        <ErrorBanner message={error ?? "Failed to load."} />
+      </div>
+    );
+  }
+
+  const { project } = data;
+
+  return (
+    <article className="pf-project-page">
+      <div className="container pf-project-container">
+        <Link to={`/${username}`} className="pf-back-link">
+          ← Back to portfolio
+        </Link>
+
+        {project.cover_image_url && (
+          <img src={project.cover_image_url} alt="" className="pf-cover" />
+        )}
+
+        <h1>{project.title}</h1>
+        {project.short_description && <p className="pf-lead">{project.short_description}</p>}
+
+        {project.technologies.length > 0 && (
+          <div className="tech-row" style={{ margin: "16px 0 8px" }}>
+            {project.technologies.map((t) => (
+              <TechBadge key={t.id} name={t.name} />
+            ))}
+          </div>
+        )}
+
+        <div className="pf-case">
+          {project.problem && (
+            <section className="pf-case-section">
+              <h4>Problem</h4>
+              <p>{project.problem}</p>
+            </section>
+          )}
+          {project.solution && (
+            <section className="pf-case-section">
+              <h4>Solution</h4>
+              <p>{project.solution}</p>
+            </section>
+          )}
+          {project.role && (
+            <section className="pf-case-section">
+              <h4>My role</h4>
+              <p>{project.role}</p>
+            </section>
+          )}
+          {project.features && (
+            <section className="pf-case-section">
+              <h4>Features</h4>
+              <ul>
+                {project.features.split("\n").map((line, i) =>
+                  line.trim() ? <li key={i}>{line.trim()}</li> : null,
+                )}
+              </ul>
+            </section>
+          )}
+          {project.result && (
+            <section className="pf-case-section">
+              <h4>Result</h4>
+              <p>{project.result}</p>
+            </section>
+          )}
+        </div>
+
+        {project.images.length > 0 && (
+          <section className="pf-gallery">
+            <h4>Gallery</h4>
+            <div className="pf-gallery-grid">
+              {project.images.map((image) => (
+                <img key={image.id} src={image.url} alt={image.alt_text ?? ""} loading="lazy" />
+              ))}
+            </div>
+          </section>
+        )}
+
+        <div className="pf-project-links">
+          {project.live_url && (
+            <a href={project.live_url} target="_blank" rel="noreferrer" className="btn btn-primary btn-lg">
+              Live demo ↗
+            </a>
+          )}
+          {project.github_url && (
+            <a
+              href={project.github_url}
+              target="_blank"
+              rel="noreferrer"
+              className="btn btn-secondary btn-lg"
+            >
+              Source code ↗
+            </a>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}

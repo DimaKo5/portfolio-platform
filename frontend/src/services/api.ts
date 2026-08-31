@@ -1,0 +1,68 @@
+import type { ApiErrorPayload } from "../types";
+
+export class ApiError extends Error {
+  code: string;
+  status: number;
+
+  constructor(code: string, message: string, status: number) {
+    super(message);
+    this.code = code;
+    this.status = status;
+  }
+}
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "/api/v1";
+
+function authHeaders(): Record<string, string> {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers: {
+      ...authHeaders(),
+      ...(options.body && !(options.body instanceof FormData)
+        ? { "Content-Type": "application/json" }
+        : {}),
+      ...options.headers,
+    },
+  });
+
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
+  let data: unknown = null;
+  try {
+    data = await response.json();
+  } catch {
+    /* non-JSON response */
+  }
+
+  if (!response.ok) {
+    const payload = data as ApiErrorPayload | null;
+    throw new ApiError(
+      payload?.error?.code ?? "REQUEST_FAILED",
+      payload?.error?.message ?? "Something went wrong. Please try again.",
+      response.status,
+    );
+  }
+
+  return data as T;
+}
+
+export const api = {
+  get: <T>(path: string) => request<T>(path),
+  post: <T>(path: string, body?: unknown) =>
+    request<T>(path, {
+      method: "POST",
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    }),
+  put: <T>(path: string, body?: unknown) =>
+    request<T>(path, { method: "PUT", body: body !== undefined ? JSON.stringify(body) : undefined }),
+  delete: <T>(path: string) => request<T>(path, { method: "DELETE" }),
+  upload: <T>(path: string, formData: FormData) =>
+    request<T>(path, { method: "POST", body: formData }),
+};
