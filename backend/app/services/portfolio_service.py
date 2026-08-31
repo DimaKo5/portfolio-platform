@@ -47,6 +47,7 @@ class PortfolioService:
         self.db.commit()
         return PublicProjectResponse(
             username=user.username,
+            theme=user.profile.theme if user.profile else "classic",
             project=ProjectResponse.model_validate(project),
         )
 

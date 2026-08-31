@@ -23,6 +23,7 @@ export interface Profile {
   github_url: string | null;
   linkedin_url: string | null;
   telegram_url: string | null;
+  theme: string;
   view_count: number;
 }
 
@@ -90,6 +91,7 @@ export interface PublicPortfolio {
 
 export interface PublicProject {
   username: string;
+  theme: string;
   project: Project;
 }
 

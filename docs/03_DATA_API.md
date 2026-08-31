@@ -102,6 +102,7 @@ website_url
 github_url
 linkedin_url
 telegram_url
+theme
 view_count
 created_at
 updated_at

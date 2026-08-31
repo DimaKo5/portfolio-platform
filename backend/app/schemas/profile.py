@@ -12,6 +12,7 @@ class ProfileUpdate(BaseModel):
     github_url: HttpUrl | None = None
     linkedin_url: HttpUrl | None = None
     telegram_url: HttpUrl | None = None
+    theme: str | None = Field(default=None, pattern="^(classic|dark|minimal)$")
 
     model_config = ConfigDict(str_strip_whitespace=True)
 
@@ -29,6 +30,7 @@ class ProfileResponse(BaseModel):
     github_url: str | None
     linkedin_url: str | None
     telegram_url: str | None
+    theme: str = "classic"
     view_count: int = 0
 
 

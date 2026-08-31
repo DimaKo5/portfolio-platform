@@ -23,6 +23,7 @@ class Profile(Base):
     github_url: Mapped[str | None] = mapped_column(String(500))
     linkedin_url: Mapped[str | None] = mapped_column(String(500))
     telegram_url: Mapped[str | None] = mapped_column(String(500))
+    theme: Mapped[str] = mapped_column(String(20), default="classic")
     view_count: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(

@@ -65,7 +65,7 @@ export function PublicProjectPage() {
   const { project } = data;
 
   return (
-    <article className="pf-project-page">
+    <article className={`pf-project-page pf-theme-${data.theme ?? "classic"}`}>
       <div className="container pf-project-container">
         <Link to={`/${username}`} className="pf-back-link">
           ← Вернуться в портфолио

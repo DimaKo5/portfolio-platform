@@ -19,4 +19,5 @@ class PublicProjectResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     username: str
+    theme: str = "classic"
     project: ProjectResponse

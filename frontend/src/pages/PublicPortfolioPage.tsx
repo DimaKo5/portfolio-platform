@@ -76,7 +76,12 @@ export function PublicPortfolioPage() {
   );
 
   return (
-    <div className="pf">
+    <div className={`pf pf-theme-${profile.theme ?? "classic"}`}>
+      <div className="container pf-actions no-print">
+        <button type="button" className="btn btn-secondary btn-sm" onClick={() => window.print()}>
+          Скачать PDF
+        </button>
+      </div>
       {/* Hero */}
       <section className="pf-hero">
         <div className="container pf-hero-inner">

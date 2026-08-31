@@ -101,6 +101,41 @@ class TestLogin:
         assert response.status_code == 401
 
 
+class TestRateLimit:
+    def test_login_rate_limited(self, client):
+        for _ in range(10):
+            client.post(
+                "/api/v1/auth/login",
+                json={"email": "ghost@example.com", "password": "whatever123"},
+            )
+        response = client.post(
+            "/api/v1/auth/login",
+            json={"email": "ghost@example.com", "password": "whatever123"},
+        )
+        assert response.status_code == 429
+        assert response.json()["error"]["code"] == "RATE_LIMITED"
+
+    def test_register_rate_limited(self, client):
+        for i in range(5):
+            client.post(
+                "/api/v1/auth/register",
+                json={"email": f"u{i}@example.com", "username": f"user{i}", "password": "strongpass123"},
+            )
+        response = client.post(
+            "/api/v1/auth/register",
+            json={"email": "u99@example.com", "username": "user99", "password": "strongpass123"},
+        )
+        assert response.status_code == 429
+
+    def test_rate_limit_does_not_affect_other_endpoints(self, client, auth_headers):
+        for _ in range(10):
+            client.post(
+                "/api/v1/auth/login",
+                json={"email": "ghost@example.com", "password": "whatever123"},
+            )
+        assert client.get("/api/v1/projects", headers=auth_headers).status_code == 200
+
+
 class TestPasswordChange:
     def test_change_password(self, client, auth_headers):
         response = client.put(

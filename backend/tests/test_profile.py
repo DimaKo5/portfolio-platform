@@ -66,3 +66,31 @@ class TestProfile:
         assert data["display_name"] == "Original"
         assert data["headline"] == "Dev"
         assert data["location"] == "Moscow"
+
+
+class TestTheme:
+    def test_default_theme(self, client, auth_headers):
+        response = client.get("/api/v1/profile", headers=auth_headers)
+        assert response.json()["theme"] == "classic"
+
+    def test_set_theme(self, client, auth_headers):
+        response = client.put(
+            "/api/v1/profile", headers=auth_headers, json={"theme": "dark"}
+        )
+        assert response.status_code == 200
+        assert response.json()["theme"] == "dark"
+
+    def test_invalid_theme_rejected(self, client, auth_headers):
+        response = client.put(
+            "/api/v1/profile", headers=auth_headers, json={"theme": "hacker-green"}
+        )
+        assert response.status_code == 422
+
+    def test_theme_exposed_on_public_project(self, client, auth_headers):
+        from tests.conftest import create_project
+
+        client.put("/api/v1/profile", headers=auth_headers, json={"theme": "minimal"})
+        project = create_project(client, auth_headers, title="Themed")
+        client.post(f"/api/v1/projects/{project['id']}/publish", headers=auth_headers)
+        response = client.get("/api/v1/public/owner/projects/themed")
+        assert response.json()["theme"] == "minimal"

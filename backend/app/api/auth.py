@@ -18,8 +18,12 @@ from app.schemas.auth import (
     UserResponse,
 )
 from app.services.auth_service import AuthService
+from app.utils.rate_limit import rate_limit
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+register_limit = rate_limit(max_requests=5, window_seconds=60)
+login_limit = rate_limit(max_requests=10, window_seconds=60)
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -51,12 +55,14 @@ def get_current_user(
     return user
 
 
-@router.post("/register", response_model=TokenResponse, status_code=201)
+@router.post("/register", response_model=TokenResponse, status_code=201,
+             dependencies=[Depends(register_limit)])
 def register(data: RegisterRequest, service: AuthService = Depends()) -> TokenResponse:
     return service.register(data)
 
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=TokenResponse,
+             dependencies=[Depends(login_limit)])
 def login(data: LoginRequest, service: AuthService = Depends()) -> TokenResponse:
     return service.login(data)
 

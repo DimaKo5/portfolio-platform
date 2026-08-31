@@ -29,6 +29,9 @@ def client():
     db = SessionLocal()
     seed_technologies(db)
     db.close()
+    from app.utils.rate_limit import reset_rate_limits
+
+    reset_rate_limits()
     with TestClient(app) as c:
         yield c
 
