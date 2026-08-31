@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { ApiError } from "../services/api";
 import { Field, Input } from "../components/ui/Field";
+import { PasswordInput } from "../components/ui/PasswordInput";
 import { Button } from "../components/ui/Button";
 
 export function LoginPage() {
@@ -50,8 +51,7 @@ export function LoginPage() {
             />
           </Field>
           <Field label="Пароль">
-            <Input
-              type="password"
+            <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Ваш пароль"

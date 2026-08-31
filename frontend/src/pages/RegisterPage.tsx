@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { ApiError } from "../services/api";
 import { Field, Input } from "../components/ui/Field";
+import { PasswordInput } from "../components/ui/PasswordInput";
 import { Button } from "../components/ui/Button";
 
 const USERNAME_RE = /^[a-z0-9][a-z0-9_-]{2,29}$/;
@@ -91,8 +92,7 @@ export function RegisterPage() {
             />
           </Field>
           <Field label="Пароль" error={fieldErrors.password}>
-            <Input
-              type="password"
+            <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Минимум 8 символов"

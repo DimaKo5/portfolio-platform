@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 import { Button } from "../components/ui/Button";
 import { Field, Input } from "../components/ui/Field";
+import { PasswordInput } from "../components/ui/PasswordInput";
 import { useAuth } from "../hooks/useAuth";
 import { useToast } from "../hooks/useToast";
 import { ApiError } from "../services/api";
@@ -118,8 +119,7 @@ export function SettingsPage() {
       <form onSubmit={handleSubmitPassword} noValidate className="card card-pad settings-card">
         <h3>Смена пароля</h3>
         <Field label="Текущий пароль" error={pwErrors.current}>
-          <Input
-            type="password"
+          <PasswordInput
             value={current}
             onChange={(e) => setCurrent(e.target.value)}
             autoComplete="current-password"
@@ -128,8 +128,7 @@ export function SettingsPage() {
         </Field>
         <div className="form-grid">
           <Field label="Новый пароль" error={pwErrors.next}>
-            <Input
-              type="password"
+            <PasswordInput
               value={next}
               onChange={(e) => setNext(e.target.value)}
               placeholder="Минимум 8 символов"
@@ -138,8 +137,7 @@ export function SettingsPage() {
             />
           </Field>
           <Field label="Повторите новый пароль" error={pwErrors.confirm}>
-            <Input
-              type="password"
+            <PasswordInput
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               autoComplete="new-password"
@@ -166,8 +164,7 @@ export function SettingsPage() {
             />
           </Field>
           <Field label="Текущий пароль" error={emailErrors.password}>
-            <Input
-              type="password"
+            <PasswordInput
               value={emailPassword}
               onChange={(e) => setEmailPassword(e.target.value)}
               autoComplete="current-password"
@@ -206,8 +203,7 @@ export function SettingsPage() {
         onConfirm={() => void handleDeleteAccount()}
       >
         <Field label="Подтвердите паролем" error={deleteError ?? undefined}>
-          <Input
-            type="password"
+          <PasswordInput
             value={deletePassword}
             onChange={(e) => setDeletePassword(e.target.value)}
             autoComplete="current-password"
