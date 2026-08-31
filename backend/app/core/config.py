@@ -14,6 +14,16 @@ class Settings(BaseSettings):
     CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
     UPLOAD_DIR: str = "uploads"
     MAX_UPLOAD_SIZE_MB: int = 5
+    PASSWORD_RESET_TTL_MINUTES: int = 15
+
+    # SMTP (optional). When not configured, reset codes are returned in the API
+    # response in development mode instead of being emailed.
+    SMTP_HOST: str = ""
+    SMTP_PORT: int = 587
+    SMTP_USER: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM: str = ""
+    SMTP_TLS: bool = True
 
     @property
     def cors_origins(self) -> list[str]:
@@ -22,6 +32,10 @@ class Settings(BaseSettings):
     @property
     def max_upload_size_bytes(self) -> int:
         return self.MAX_UPLOAD_SIZE_MB * 1024 * 1024
+
+    @property
+    def smtp_enabled(self) -> bool:
+        return bool(self.SMTP_HOST and self.SMTP_USER and self.SMTP_PASSWORD)
 
 
 @lru_cache

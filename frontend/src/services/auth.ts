@@ -21,6 +21,14 @@ export const authApi = {
 
   deleteAccount: (password: string) =>
     api.deleteWithBody<void>("/auth/account", { password }),
+
+  resetRequest: (email: string) =>
+    api.post<{ detail: string; dev_code: string | null }>("/auth/reset-request", {
+      email,
+    }),
+
+  resetConfirm: (email: string, code: string, newPassword: string) =>
+    api.post<void>("/auth/reset-confirm", { email, code, new_password: newPassword }),
 };
 
 export function saveToken(token: string) {

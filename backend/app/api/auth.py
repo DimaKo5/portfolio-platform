@@ -14,6 +14,9 @@ from app.schemas.auth import (
     LoginRequest,
     PasswordChangeRequest,
     RegisterRequest,
+    ResetConfirm,
+    ResetRequest,
+    ResetRequestResponse,
     TokenResponse,
     UserResponse,
 )
@@ -24,6 +27,8 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 register_limit = rate_limit(max_requests=5, window_seconds=60)
 login_limit = rate_limit(max_requests=10, window_seconds=60)
+reset_request_limit = rate_limit(max_requests=3, window_seconds=60)
+reset_confirm_limit = rate_limit(max_requests=10, window_seconds=60)
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -70,6 +75,20 @@ def login(data: LoginRequest, service: AuthService = Depends()) -> TokenResponse
 @router.get("/me", response_model=UserResponse)
 def me(current_user: User = Depends(get_current_user)) -> UserResponse:
     return UserResponse.model_validate(current_user)
+
+
+@router.post("/reset-request", response_model=ResetRequestResponse,
+             dependencies=[Depends(reset_request_limit)])
+def reset_request(
+    data: ResetRequest, service: AuthService = Depends()
+) -> ResetRequestResponse:
+    return service.request_password_reset(data.email)
+
+
+@router.post("/reset-confirm", status_code=204,
+             dependencies=[Depends(reset_confirm_limit)])
+def reset_confirm(data: ResetConfirm, service: AuthService = Depends()) -> None:
+    service.confirm_password_reset(data.email, data.code, data.new_password)
 
 
 @router.put("/password", status_code=204)

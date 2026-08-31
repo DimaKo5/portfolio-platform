@@ -1,21 +1,34 @@
+import secrets
 import uuid
+from datetime import timedelta
 
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from app.core.database import get_db
+from app.core.config import settings
+from app.core.database import get_db, utcnow
 from app.core.security import create_access_token, hash_password, verify_password
 from app.models import User
+from app.repositories.password_reset_repository import PasswordResetRepository
 from app.repositories.user_repository import UserRepository
-from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse, UserResponse
+from app.schemas.auth import (
+    LoginRequest,
+    RegisterRequest,
+    ResetRequestResponse,
+    TokenResponse,
+    UserResponse,
+)
+from app.services.email_service import send_password_reset_email
 from app.utils.errors import AppError
 
 ALREADY_EXISTS_STATUS = 409
+GENERIC_RESET_DETAIL = "Если аккаунт с таким email существует, код подтверждения отправлен."
 
 
 class AuthService:
     def __init__(self, db: Session = Depends(get_db)):
         self.repo = UserRepository(db)
+        self.resets = PasswordResetRepository(db)
 
     def register(self, data: RegisterRequest) -> TokenResponse:
         from app.utils.slug import is_valid_username
@@ -55,6 +68,49 @@ class AuthService:
         if not verify_password(password, user.password_hash):
             raise AppError("INVALID_CREDENTIALS", "Текущий пароль указан неверно.", 400)
         self.repo.delete(user)
+
+    def request_password_reset(self, email: str) -> ResetRequestResponse:
+        user = self.repo.get_by_email(email)
+        if not user:
+            # Same response as success — do not leak which emails are registered.
+            return ResetRequestResponse(detail=GENERIC_RESET_DETAIL)
+
+        code = f"{secrets.randbelow(1_000_000):06d}"
+        self.resets.invalidate_all(user.id)
+        expires_at = utcnow() + timedelta(minutes=settings.PASSWORD_RESET_TTL_MINUTES)
+        self.resets.create(user.id, hash_password(code), expires_at)
+
+        if settings.smtp_enabled:
+            try:
+                send_password_reset_email(user.email, code)
+            except Exception:
+                raise AppError(
+                    "EMAIL_SEND_FAILED",
+                    "Не удалось отправить письмо. Попробуйте позже.",
+                    502,
+                )
+            return ResetRequestResponse(detail=GENERIC_RESET_DETAIL)
+
+        if settings.ENV != "development":
+            raise AppError(
+                "EMAIL_NOT_CONFIGURED",
+                "Почтовый сервис не настроен.",
+                500,
+            )
+        # Development convenience: no SMTP configured -> surface the code in the
+        # response so the flow is testable without a mail server.
+        return ResetRequestResponse(detail=GENERIC_RESET_DETAIL, dev_code=code)
+
+    def confirm_password_reset(self, email: str, code: str, new_password: str) -> None:
+        user = self.repo.get_by_email(email)
+        if not user:
+            raise AppError("INVALID_RESET_CODE", "Неверный код подтверждения.", 400)
+        reset = self.resets.get_latest_active(user.id, utcnow())
+        if not reset or not verify_password(code, reset.code_hash):
+            raise AppError("INVALID_RESET_CODE", "Неверный код подтверждения.", 400)
+        reset.used = True
+        user.password_hash = hash_password(new_password)
+        self.repo.save(user)
 
     def _token_response(self, user: User) -> TokenResponse:
         return TokenResponse(

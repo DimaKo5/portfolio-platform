@@ -51,13 +51,18 @@ export function LoginPage() {
             />
           </Field>
           <Field label="Пароль">
-            <PasswordInput
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Ваш пароль"
-              autoComplete="current-password"
-              required
-            />
+            <div className="password-row">
+              <PasswordInput
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Ваш пароль"
+                autoComplete="current-password"
+                required
+              />
+              <Link to="/forgot-password" className="forgot-link">
+                Забыли пароль?
+              </Link>
+            </div>
           </Field>
           <Button type="submit" size="lg" disabled={submitting} className="auth-submit">
             {submitting ? "Входим…" : "Войти"}

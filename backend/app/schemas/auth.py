@@ -28,6 +28,21 @@ class AccountDeleteRequest(BaseModel):
     password: str = Field(min_length=1, max_length=128)
 
 
+class ResetRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetRequestResponse(BaseModel):
+    detail: str
+    dev_code: str | None = None
+
+
+class ResetConfirm(BaseModel):
+    email: EmailStr
+    code: str = Field(pattern=r"^\d{6}$")
+    new_password: str = Field(min_length=8, max_length=128)
+
+
 class UserResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

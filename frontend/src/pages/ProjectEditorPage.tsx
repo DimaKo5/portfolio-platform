@@ -13,13 +13,39 @@ import { portfolioApi } from "../services/portfolio";
 import { projectsApi } from "../services/projects";
 import type { Project, ProjectPayload, Technology } from "../types";
 
+function emptyDraft(): Project {
+  const now = new Date().toISOString();
+  return {
+    id: "draft",
+    title: "",
+    slug: "",
+    short_description: null,
+    problem: null,
+    solution: null,
+    features: null,
+    result: null,
+    role: null,
+    cover_image_url: null,
+    github_url: null,
+    live_url: null,
+    status: "DRAFT",
+    sort_order: 0,
+    view_count: 0,
+    created_at: now,
+    updated_at: now,
+    published_at: null,
+    technologies: [],
+    images: [],
+  };
+}
+
 export function ProjectEditorPage() {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const { showSuccess, showError, toastNode } = useToast();
 
   const isNew = !projectId;
-  const [project, setProject] = useState<Project | null>(null);
+  const [project, setProject] = useState<Project | null>(isNew ? emptyDraft() : null);
   const [technologies, setTechnologies] = useState<Technology[]>([]);
   const [selectedTechIds, setSelectedTechIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(!isNew);
@@ -91,11 +117,15 @@ export function ProjectEditorPage() {
     try {
       if (isNew) {
         const created = await projectsApi.create(payload);
-        setProject(created);
-        setSelectedTechIds([]);
-        showSuccess("Проект создан — теперь заполните кейс");
+        const withTechs =
+          selectedTechIds.length > 0
+            ? await projectsApi.setTechnologies(created.id, selectedTechIds)
+            : created;
+        setProject(withTechs);
+        showSuccess("Проект создан");
+        // Keep the user on the editor with a real id in the URL.
         navigate(`/dashboard/projects/${created.id}`, { replace: true });
-        return created;
+        return withTechs;
       }
       const updated = await projectsApi.update(projectId!, payload);
       setProject(updated);
@@ -113,7 +143,7 @@ export function ProjectEditorPage() {
 
   const handleSaveAndTech = async () => {
     const saved = await handleSave();
-    if (!saved) return;
+    if (!saved || isNew) return;
     try {
       const updated = await projectsApi.setTechnologies(saved.id, selectedTechIds);
       setProject(updated);
@@ -162,14 +192,14 @@ export function ProjectEditorPage() {
         <div>
           <div className="editor-title-row">
             <h1 className="page-title">{isNew ? "Новый проект" : "Редактирование проекта"}</h1>
-            {project && <StatusBadge status={project.status} />}
+            {project && !isNew && <StatusBadge status={project.status} />}
           </div>
           <p className="page-subtitle" style={{ marginBottom: 0 }}>
             Хороший кейс отвечает на вопросы: какая проблема? какое решение? какой результат?
           </p>
         </div>
         <div className="editor-header-actions">
-          {project && (
+          {project && !isNew && (
             <Button
               variant={project.status === "PUBLISHED" ? "secondary" : "primary"}
               onClick={handlePublishToggle}
@@ -320,7 +350,7 @@ export function ProjectEditorPage() {
             </div>
           </section>
 
-          {project && (
+          {!isNew && project && (
             <ProjectImages
               project={project}
               onProjectChange={setProject}
@@ -332,12 +362,18 @@ export function ProjectEditorPage() {
             <Button type="submit" size="lg" disabled={saving}>
               {saving ? "Сохранение…" : isNew ? "Создать проект" : "Сохранить изменения"}
             </Button>
-            {project && (
+            {isNew ? (
               <span className="field-hint">
-                {project.status === "PUBLISHED"
-                  ? "Проект виден на вашей публичной странице."
-                  : "Черновик — виден только вам, пока не опубликуете."}
+                Проект появится в списке после нажатия «Создать проект».
               </span>
+            ) : (
+              project && (
+                <span className="field-hint">
+                  {project.status === "PUBLISHED"
+                    ? "Проект виден на вашей публичной странице."
+                    : "Черновик — виден только вам, пока не опубликуете."}
+                </span>
+              )
             )}
           </div>
         </form>

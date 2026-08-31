@@ -48,6 +48,8 @@ User
  │
  ├── Portfolio
  │
+ ├── PasswordReset (сброс пароля: код 6 цифр, TTL 15 мин, одноразовый)
+ │
  └── Projects
         │
         ├── Technologies
@@ -827,6 +829,8 @@ GET    /auth/me
 PUT    /auth/password
 PUT    /auth/email
 DELETE /auth/account
+POST   /auth/reset-request
+POST   /auth/reset-confirm
 
 PROFILE
 GET    /profile
