@@ -30,6 +30,7 @@ class Project(Base):
     live_url: Mapped[str | None] = mapped_column(String(500))
     status: Mapped[str] = mapped_column(String(16), default=STATUS_DRAFT, index=True)
     sort_order: Mapped[int] = mapped_column(Integer, default=0)
+    view_count: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utcnow, onupdate=utcnow

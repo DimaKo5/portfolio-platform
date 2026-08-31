@@ -29,6 +29,7 @@ class ProfileResponse(BaseModel):
     github_url: str | None
     linkedin_url: str | None
     telegram_url: str | None
+    view_count: int = 0
 
 
 class AvatarResponse(BaseModel):

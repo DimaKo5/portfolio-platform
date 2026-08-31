@@ -15,6 +15,12 @@ export const authApi = {
       current_password: currentPassword,
       new_password: newPassword,
     }),
+
+  changeEmail: (email: string, password: string) =>
+    api.put<User>("/auth/email", { email, password }),
+
+  deleteAccount: (password: string) =>
+    api.deleteWithBody<void>("/auth/account", { password }),
 };
 
 export function saveToken(token: string) {

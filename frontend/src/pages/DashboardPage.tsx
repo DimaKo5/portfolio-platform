@@ -67,6 +67,10 @@ export function DashboardPage() {
           <span className="stat-label">Черновиков</span>
         </div>
         <div className="card card-pad stat-card">
+          <span className="stat-value">{data.profile.view_count}</span>
+          <span className="stat-label">Просмотров страницы</span>
+        </div>
+        <div className="card card-pad stat-card">
           <span className="stat-value">{completion}%</span>
           <span className="stat-label">Профиль заполнен</span>
           <Link to="/dashboard/profile" className="stat-link">

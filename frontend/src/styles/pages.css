@@ -339,7 +339,7 @@
 
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: var(--space-4);
   margin-bottom: var(--space-8);
 }
@@ -443,6 +443,34 @@
 
 .project-row-title h3 {
   font-size: var(--text-base);
+}
+
+.view-count {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* Settings */
+.settings-card {
+  max-width: 760px;
+  margin-bottom: var(--space-5);
+}
+
+.settings-card h3 {
+  margin-bottom: var(--space-4);
+}
+
+.danger-zone {
+  border-color: #fecaca;
+}
+
+.danger-zone h3 {
+  color: var(--color-danger);
+}
+
+.danger-zone p {
+  margin-bottom: var(--space-4);
 }
 
 .project-row-main p {

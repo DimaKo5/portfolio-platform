@@ -23,6 +23,7 @@ export interface Profile {
   github_url: string | null;
   linkedin_url: string | null;
   telegram_url: string | null;
+  view_count: number;
 }
 
 export interface Technology {
@@ -54,6 +55,7 @@ export interface Project {
   live_url: string | null;
   status: ProjectStatus;
   sort_order: number;
+  view_count: number;
   created_at: string;
   updated_at: string;
   published_at: string | null;

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import type { ReactNode } from "react";
 import { Button } from "./Button";
 
 interface ConfirmDialogProps {
@@ -8,6 +9,7 @@ interface ConfirmDialogProps {
   confirmLabel?: string;
   onConfirm: () => void;
   onCancel: () => void;
+  children?: ReactNode;
 }
 
 export function ConfirmDialog({
@@ -17,6 +19,7 @@ export function ConfirmDialog({
   confirmLabel = "Удалить",
   onConfirm,
   onCancel,
+  children,
 }: ConfirmDialogProps) {
   useEffect(() => {
     if (!open) return;
@@ -34,6 +37,7 @@ export function ConfirmDialog({
       <div className="modal" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
         <h3>{title}</h3>
         <p>{description}</p>
+        {children}
         <div className="modal-actions">
           <Button variant="secondary" onClick={onCancel}>
             Отмена

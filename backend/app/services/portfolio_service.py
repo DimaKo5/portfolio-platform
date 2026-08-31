@@ -12,6 +12,7 @@ from app.utils.errors import AppError
 
 class PortfolioService:
     def __init__(self, db: Session = Depends(get_db)):
+        self.db = db
         self.repo = ProjectRepository(db)
         self.users = UserRepository(db)
 
@@ -22,6 +23,8 @@ class PortfolioService:
         profile = user.profile
         if not profile:
             raise AppError("PORTFOLIO_NOT_FOUND", "Портфолио не найдено.", 404)
+        profile.view_count += 1
+        self.db.commit()
         projects = self.repo.list_published_by_user(user.id)
         skills = sorted({t.name for p in projects for t in p.technologies})
         return PublicPortfolioResponse(
@@ -40,6 +43,8 @@ class PortfolioService:
         )
         if not project:
             raise AppError("PROJECT_NOT_FOUND", "Проект не найден.", 404)
+        project.view_count += 1
+        self.db.commit()
         return PublicProjectResponse(
             username=user.username,
             project=ProjectResponse.model_validate(project),

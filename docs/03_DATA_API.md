@@ -102,6 +102,7 @@ website_url
 github_url
 linkedin_url
 telegram_url
+view_count
 created_at
 updated_at
 Example
@@ -135,6 +136,7 @@ github_url
 live_url
 status
 sort_order
+view_count
 created_at
 updated_at
 published_at
@@ -821,6 +823,9 @@ AUTH
 POST   /auth/register
 POST   /auth/login
 GET    /auth/me
+PUT    /auth/password
+PUT    /auth/email
+DELETE /auth/account
 
 PROFILE
 GET    /profile

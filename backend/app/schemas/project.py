@@ -58,6 +58,7 @@ class ProjectResponse(BaseModel):
     live_url: str | None
     status: str
     sort_order: int
+    view_count: int = 0
     created_at: datetime
     updated_at: datetime
     published_at: datetime | None

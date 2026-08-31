@@ -41,6 +41,21 @@ class AuthService:
         user.password_hash = hash_password(new_password)
         self.repo.save(user)
 
+    def change_email(self, user: User, email: str, password: str) -> UserResponse:
+        if not verify_password(password, user.password_hash):
+            raise AppError("INVALID_CREDENTIALS", "Текущий пароль указан неверно.", 400)
+        email = email.lower()
+        if email != user.email and self.repo.get_by_email(email):
+            raise AppError("EMAIL_ALREADY_EXISTS", "Этот email уже зарегистрирован.", ALREADY_EXISTS_STATUS)
+        user.email = email
+        self.repo.save(user)
+        return UserResponse.model_validate(user)
+
+    def delete_account(self, user: User, password: str) -> None:
+        if not verify_password(password, user.password_hash):
+            raise AppError("INVALID_CREDENTIALS", "Текущий пароль указан неверно.", 400)
+        self.repo.delete(user)
+
     def _token_response(self, user: User) -> TokenResponse:
         return TokenResponse(
             access_token=create_access_token(user.id),

@@ -158,6 +158,9 @@ export function ProjectsPage() {
                 <div className="project-row-title">
                   <h3>{project.title}</h3>
                   <StatusBadge status={project.status} />
+                  <span className="view-count" title="Просмотры на публичной странице">
+                    👁 {project.view_count}
+                  </span>
                 </div>
                 <p className="muted">{project.short_description || "Описание пока не заполнено."}</p>
                 <div className="tech-row">

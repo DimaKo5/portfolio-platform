@@ -9,6 +9,8 @@ from app.core.security import decode_access_token
 from app.models import User
 from app.repositories.user_repository import UserRepository
 from app.schemas.auth import (
+    AccountDeleteRequest,
+    EmailChangeRequest,
     LoginRequest,
     PasswordChangeRequest,
     RegisterRequest,
@@ -71,3 +73,21 @@ def change_password(
     service: AuthService = Depends(),
 ) -> None:
     service.change_password(current_user, data.current_password, data.new_password)
+
+
+@router.put("/email", response_model=UserResponse)
+def change_email(
+    data: EmailChangeRequest,
+    current_user: User = Depends(get_current_user),
+    service: AuthService = Depends(),
+) -> UserResponse:
+    return service.change_email(current_user, data.email, data.password)
+
+
+@router.delete("/account", status_code=204)
+def delete_account(
+    data: AccountDeleteRequest,
+    current_user: User = Depends(get_current_user),
+    service: AuthService = Depends(),
+) -> None:
+    service.delete_account(current_user, data.password)
