@@ -6,6 +6,13 @@ import { ApiError } from "../services/api";
 import { portfolioApi } from "../services/portfolio";
 import type { PublicPortfolio } from "../types";
 
+const CONTACT_LABELS: Record<string, string> = {
+  website_url: "Сайт",
+  github_url: "GitHub",
+  linkedin_url: "LinkedIn",
+  telegram_url: "Telegram",
+};
+
 export function PublicPortfolioPage() {
   const { username } = useParams<{ username: string }>();
   const [portfolio, setPortfolio] = useState<PublicPortfolio | null>(null);
@@ -19,7 +26,9 @@ export function PublicPortfolioPage() {
       .getPublic(username)
       .then(setPortfolio)
       .catch((err) =>
-        setError(err instanceof ApiError && err.status === 404 ? "not-found" : "Failed to load portfolio."),
+        setError(
+          err instanceof ApiError && err.status === 404 ? "not-found" : "Не удалось загрузить портфолио.",
+        ),
       )
       .finally(() => setLoading(false));
   }, [username]);
@@ -27,11 +36,11 @@ export function PublicPortfolioPage() {
   useEffect(() => {
     if (portfolio) {
       document.title = portfolio.profile.display_name
-        ? `${portfolio.profile.display_name} — Portfolio`
-        : `${portfolio.username} — Portfolio`;
+        ? `${portfolio.profile.display_name} — Портфолио`
+        : `@${portfolio.username} — Портфолио`;
     }
     return () => {
-      document.title = "Portfolio Platform — Show your real work";
+      document.title = "Portfolio Platform — покажите реальные работы";
     };
   }, [portfolio]);
 
@@ -46,8 +55,8 @@ export function PublicPortfolioPage() {
   if (error === "not-found") {
     return (
       <div className="public-404 container">
-        <h1>Portfolio not found</h1>
-        <p>There is no portfolio at /{username}.</p>
+        <h1>Портфолио не найдено</h1>
+        <p>Портфолио по адресу /{username} не существует.</p>
         <Link to="/" className="btn btn-primary">
           Portfolio Platform ↗
         </Link>
@@ -58,12 +67,15 @@ export function PublicPortfolioPage() {
   if (error || !portfolio) {
     return (
       <div className="container" style={{ paddingTop: 40 }}>
-        <ErrorBanner message={error ?? "Failed to load."} />
+        <ErrorBanner message={error ?? "Ошибка загрузки."} />
       </div>
     );
   }
 
   const { profile } = portfolio;
+  const contacts = (["website_url", "github_url", "linkedin_url", "telegram_url"] as const).filter(
+    (key) => profile[key],
+  );
 
   return (
     <div className="pf">
@@ -81,45 +93,38 @@ export function PublicPortfolioPage() {
             <h1>{profile.display_name ?? `@${portfolio.username}`}</h1>
             {profile.headline && <p className="pf-headline">{profile.headline}</p>}
             {profile.location && <p className="pf-location">{profile.location}</p>}
-            <div className="pf-contact-row">
-              {profile.website_url && (
-                <a href={profile.website_url} target="_blank" rel="noreferrer" className="badge badge-tech">
-                  Website ↗
-                </a>
-              )}
-              {profile.github_url && (
-                <a href={profile.github_url} target="_blank" rel="noreferrer" className="badge badge-tech">
-                  GitHub ↗
-                </a>
-              )}
-              {profile.linkedin_url && (
-                <a href={profile.linkedin_url} target="_blank" rel="noreferrer" className="badge badge-tech">
-                  LinkedIn ↗
-                </a>
-              )}
-              {profile.telegram_url && (
-                <a href={profile.telegram_url} target="_blank" rel="noreferrer" className="badge badge-tech">
-                  Telegram ↗
-                </a>
-              )}
-            </div>
+            {contacts.length > 0 && (
+              <div className="pf-contact-row">
+                {contacts.map((key) => (
+                  <a
+                    key={key}
+                    href={profile[key]!}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="badge badge-tech"
+                  >
+                    {CONTACT_LABELS[key]} ↗
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       <div className="container pf-content">
-        {/* About */}
+        {/* О себе */}
         {profile.bio && (
           <section className="pf-section">
-            <h2>About</h2>
+            <h2>О себе</h2>
             <p className="pf-bio">{profile.bio}</p>
           </section>
         )}
 
-        {/* Skills */}
+        {/* Технологии */}
         {portfolio.skills.length > 0 && (
           <section className="pf-section">
-            <h2>Technologies</h2>
+            <h2>Технологии</h2>
             <div className="tech-row">
               {portfolio.skills.map((skill) => (
                 <span key={skill} className="badge badge-tech">
@@ -130,11 +135,11 @@ export function PublicPortfolioPage() {
           </section>
         )}
 
-        {/* Projects */}
+        {/* Проекты */}
         <section className="pf-section">
-          <h2>Projects</h2>
+          <h2>Проекты</h2>
           {portfolio.projects.length === 0 ? (
-            <p className="muted">No published projects yet.</p>
+            <p className="muted">Опубликованных проектов пока нет.</p>
           ) : (
             <div className="pf-projects-grid">
               {portfolio.projects.map((project) => (
@@ -169,33 +174,26 @@ export function PublicPortfolioPage() {
           )}
         </section>
 
-        {/* Contacts */}
-        <section className="pf-section pf-contacts">
-          <h2>Contact</h2>
-          <p className="muted">Reach out via any of the links:</p>
-          <div className="pf-contact-row">
-            {profile.telegram_url && (
-              <a href={profile.telegram_url} target="_blank" rel="noreferrer" className="btn btn-secondary">
-                Telegram ↗
-              </a>
-            )}
-            {profile.linkedin_url && (
-              <a href={profile.linkedin_url} target="_blank" rel="noreferrer" className="btn btn-secondary">
-                LinkedIn ↗
-              </a>
-            )}
-            {profile.website_url && (
-              <a href={profile.website_url} target="_blank" rel="noreferrer" className="btn btn-secondary">
-                Website ↗
-              </a>
-            )}
-            {profile.github_url && (
-              <a href={profile.github_url} target="_blank" rel="noreferrer" className="btn btn-secondary">
-                GitHub ↗
-              </a>
-            )}
-          </div>
-        </section>
+        {/* Контакты */}
+        {contacts.length > 0 && (
+          <section className="pf-section pf-contacts">
+            <h2>Связаться</h2>
+            <p className="muted">Напишите мне по любому из каналов:</p>
+            <div className="pf-contact-row">
+              {contacts.map((key) => (
+                <a
+                  key={key}
+                  href={profile[key]!}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-secondary"
+                >
+                  {CONTACT_LABELS[key]} ↗
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

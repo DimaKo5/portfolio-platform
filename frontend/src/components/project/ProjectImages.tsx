@@ -21,7 +21,7 @@ export function ProjectImages({ project, onProjectChange, onError }: ProjectImag
       const image = await projectsApi.uploadImage(project.id, file);
       onProjectChange({ ...project, images: [...project.images, image] });
     } catch (err) {
-      onError(err instanceof ApiError ? err.message : "Failed to upload image.");
+      onError(err instanceof ApiError ? err.message : "Не удалось загрузить изображение.");
     } finally {
       setUploading(false);
       event.target.value = "";
@@ -32,7 +32,7 @@ export function ProjectImages({ project, onProjectChange, onError }: ProjectImag
     projectsApi
       .update(project.id, { cover_image_url: url })
       .then(onProjectChange)
-      .catch(() => onError("Failed to set cover image."));
+      .catch(() => onError("Не удалось установить обложку."));
   };
 
   const removeImage = async (image: ProjectImage) => {
@@ -46,19 +46,19 @@ export function ProjectImages({ project, onProjectChange, onError }: ProjectImag
           project.cover_image_url === image.url ? null : project.cover_image_url,
       });
     } catch {
-      onError("Failed to delete image.");
+      onError("Не удалось удалить изображение.");
     }
   };
 
   return (
     <section className="card card-pad editor-section">
-      <h3>Cover & images</h3>
+      <h3>Обложка и изображения</h3>
       <p className="muted" style={{ marginBottom: 16 }}>
-        The cover image is shown on the portfolio card. JPEG, PNG or WebP up to 5 MB.
+        Обложка показывается на карточке проекта в портфолио. JPEG, PNG или WebP до 5 МБ.
       </p>
       <label className="upload-dropzone">
         <input type="file" accept="image/jpeg,image/png,image/webp" onChange={upload} hidden />
-        {uploading ? "Uploading…" : "+ Add image"}
+        {uploading ? "Загрузка…" : "+ Добавить изображение"}
       </label>
 
       {project.images.length > 0 && (
@@ -68,14 +68,14 @@ export function ProjectImages({ project, onProjectChange, onError }: ProjectImag
               <img src={image.url} alt="" />
               <div className="image-tile-actions">
                 {project.cover_image_url === image.url ? (
-                  <span className="badge badge-published">Cover</span>
+                  <span className="badge badge-published">Обложка</span>
                 ) : (
                   <button
                     type="button"
                     className="btn btn-secondary btn-sm"
                     onClick={() => setCover(image.url)}
                   >
-                    Set as cover
+                    Сделать обложкой
                   </button>
                 )}
                 <button
@@ -83,7 +83,7 @@ export function ProjectImages({ project, onProjectChange, onError }: ProjectImag
                   className="btn btn-danger btn-sm"
                   onClick={() => removeImage(image)}
                 >
-                  Delete
+                  Удалить
                 </button>
               </div>
             </div>

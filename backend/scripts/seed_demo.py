@@ -86,17 +86,17 @@ def upload(path: str, token: str, filename: str, content: bytes):
 PROJECTS = [
     {
         "title": "Telegram CRM",
-        "short_description": "CRM system for Telegram-based businesses.",
-        "problem": "A small online school managed student leads manually in Telegram chats. "
-        "Requests were getting lost and managers responded with delays of several hours.",
-        "solution": "Built a centralized CRM with a Telegram bot for lead capture, "
-        "a deals pipeline and automatic notifications for managers. "
-        "Implemented the backend with FastAPI and an admin dashboard with React.",
-        "role": "Full-Stack Developer (solo project)",
-        "features": "Lead capture bot with inline buttons\nDeals pipeline (new / in progress / won)\n"
-        "Manager notifications\nAdmin dashboard with statistics",
-        "result": "Lead response time dropped from hours to minutes; all requests are now "
-        "stored in one system instead of chat history.",
+        "short_description": "CRM-система для бизнеса в Telegram.",
+        "problem": "Небольшая онлайн-школа вела заявки учеников вручную в переписках Telegram. "
+        "Часть обращений терялась, менеджеры отвечали с задержкой в несколько часов.",
+        "solution": "Разработал централизованную CRM с Telegram-ботом для приёма заявок, "
+        "воронкой сделок и автоматическими уведомлениями менеджерам. "
+        "Бэкенд — FastAPI, админка — React.",
+        "role": "Full-Stack разработчик (соло-проект)",
+        "features": "Бот приёма заявок с инлайн-кнопками\nВоронка сделок (новая / в работе / успешна)\n"
+        "Уведомления менеджерам\nАдмин-панель со статистикой",
+        "result": "Время ответа на заявку сократилось с часов до минут; все обращения "
+        "хранятся в одной системе вместо истории чатов.",
         "github_url": "https://github.com/example/telegram-crm",
         "live_url": "https://telegram-crm.example.com",
         "technologies": ["Python", "FastAPI", "PostgreSQL", "React"],
@@ -104,28 +104,31 @@ PROJECTS = [
     },
     {
         "title": "Analytics Dashboard",
-        "short_description": "Real-time analytics dashboard for online stores.",
-        "problem": "Store owners had no quick way to see sales dynamics — data was scattered "
-        "between payment systems and spreadsheets.",
-        "solution": "Developed a dashboard with interactive charts, filters by period and product "
-        "categories, and a CSV export. Data aggregated on the backend with caching.",
-        "role": "Frontend Developer",
-        "features": "Interactive sales charts\nPeriod and category filters\nCSV export\nDark theme",
-        "result": "Store owners review daily sales in one screen instead of merging spreadsheets manually.",
+        "short_description": "Дашборд аналитики для интернет-магазинов в реальном времени.",
+        "problem": "Владельцы магазинов не могли быстро увидеть динамику продаж — данные "
+        "были разбросаны между платёжными системами и Excel-таблицами.",
+        "solution": "Разработал дашборд с интерактивными графиками, фильтрами по периоду "
+        "и категориям товаров, экспортом в CSV. Агрегация данных на бэкенде с кэшированием.",
+        "role": "Frontend-разработчик",
+        "features": "Интерактивные графики продаж\nФильтры по периоду и категориям\n"
+        "Экспорт в CSV\nТёмная тема",
+        "result": "Владельцы видят продажи за день на одном экране вместо ручного сведения таблиц.",
         "github_url": "https://github.com/example/analytics-dashboard",
         "live_url": "https://analytics.example.com",
         "technologies": ["TypeScript", "React", "PostgreSQL", "Tailwind CSS"],
         "cover": (600, 400, (5, 150, 105), (16, 185, 129)),
     },
     {
-        "title": "Task Automator Bot",
-        "short_description": "Telegram bot that automates routine file operations.",
-        "problem": "The team manually renamed, converted and archived dozens of files every day.",
-        "solution": "A bot that accepts files, applies rule-based operations (rename patterns, "
-        "format conversion, archiving) and returns processed archives.",
-        "role": "Backend Developer (solo project)",
-        "features": "Rule-based file processing\nArchive packaging\nProcessing history",
-        "result": "Daily routine file work reduced from ~40 minutes to under 2 minutes.",
+        "title": "Автоматизатор рутины",
+        "short_description": "Telegram-бот, автоматизирующий рутинные операции с файлами.",
+        "problem": "Команда ежедневно вручную переименовывала, конвертировала и архивировала "
+        "десятки файлов, тратя на это около 40 минут в день.",
+        "solution": "Бот, который принимает файлы, применяет правила обработки "
+        "(шаблоны переименования, конвертация форматов, упаковка в архив) "
+        "и возвращает готовые архивы.",
+        "role": "Backend-разработчик (соло-проект)",
+        "features": "Обработка файлов по правилам\nУпаковка в архив\nИстория обработок",
+        "result": "Ежедневная рутинная работа с файлами сократилась с ~40 минут до менее двух минут.",
         "github_url": "https://github.com/example/task-automator",
         "live_url": None,
         "technologies": ["Python", "Telegram Bot API", "SQLite"],
@@ -149,11 +152,11 @@ def main() -> int:
     print("auth OK")
 
     status, _ = call("PUT", "/profile", token, {
-        "display_name": "Dmitriy K.",
-        "headline": "Full-Stack Developer",
-        "bio": "I build automation tools and web applications. "
-               "I like turning messy manual processes into working products.",
-        "location": "Moscow",
+        "display_name": "Дмитрий К.",
+        "headline": "Full-Stack разработчик",
+        "bio": "Разрабатываю инструменты автоматизации и веб-приложения. "
+               "Люблю превращать запутанные ручные процессы в работающие продукты.",
+        "location": "Москва",
         "website_url": "https://dmitriy.example.com",
         "github_url": "https://github.com/example",
         "telegram_url": "https://t.me/example",
@@ -164,11 +167,10 @@ def main() -> int:
     tech_by_name = {t["name"]: t["id"] for t in techs}
 
     existing = call("GET", "/projects", token)[1]
-    existing_slugs = {p["slug"] for p in existing["items"]}
+    existing_titles = {p["title"] for p in existing["items"]}
 
     for project in PROJECTS:
-        slug = project["title"].lower().replace(" ", "-")
-        if slug in existing_slugs:
+        if project["title"] in existing_titles:
             print(f"project '{project['title']}': already exists, skip")
             continue
         status, created = call("POST", "/projects", token, {
@@ -190,7 +192,7 @@ def main() -> int:
              {"technology_ids": tech_ids})
         w, h, top, bottom = project["cover"]
         upload(f"/projects/{created['id']}/images", token,
-               f"{slug}-cover.png", png_bytes(w, h, top, bottom))
+               f"{created['slug']}-cover.png", png_bytes(w, h, top, bottom))
         cover_url = call("GET", f"/projects/{created['id']}", token)[1]["images"][0]["url"]
         call("PUT", f"/projects/{created['id']}", token, {"cover_image_url": cover_url})
         call("POST", f"/projects/{created['id']}/publish", token)

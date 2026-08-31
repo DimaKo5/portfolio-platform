@@ -25,7 +25,7 @@ export function ProjectsPage() {
     projectsApi
       .list()
       .then((data) => setProjects(data.items))
-      .catch(() => setError("Failed to load projects."))
+      .catch(() => setError("Не удалось загрузить проекты."))
       .finally(() => setLoading(false));
   };
 
@@ -40,7 +40,7 @@ export function ProjectsPage() {
     try {
       await projectsApi.reorder(next.map((p) => p.id));
     } catch {
-      showError("Failed to save the new order");
+      showError("Не удалось сохранить новый порядок");
       load();
     }
   };
@@ -54,10 +54,10 @@ export function ProjectsPage() {
           : await projectsApi.publish(project.id);
       setProjects((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
       showSuccess(
-        updated.status === "PUBLISHED" ? "Project published" : "Project unpublished",
+        updated.status === "PUBLISHED" ? "Проект опубликован" : "Проект скрыт в черновики",
       );
     } catch (err) {
-      showError(err instanceof ApiError ? err.message : "Action failed");
+      showError(err instanceof ApiError ? err.message : "Действие не удалось");
     } finally {
       setBusyId(null);
     }
@@ -69,9 +69,9 @@ export function ProjectsPage() {
     try {
       await projectsApi.remove(deleting.id);
       setProjects((prev) => prev.filter((p) => p.id !== deleting.id));
-      showSuccess("Project deleted");
+      showSuccess("Проект удалён");
     } catch {
-      showError("Failed to delete project");
+      showError("Не удалось удалить проект");
     } finally {
       setBusyId(null);
       setDeleting(null);
@@ -90,13 +90,13 @@ export function ProjectsPage() {
     <div className="page">
       <div className="page-header-row">
         <div>
-          <h1 className="page-title">Projects</h1>
+          <h1 className="page-title">Проекты</h1>
           <p className="page-subtitle" style={{ marginBottom: 0 }}>
-            Order here = order on your public page.
+            Порядок в списке = порядок на публичной странице.
           </p>
         </div>
         <Link to="/dashboard/projects/new" className="btn btn-primary">
-          + New project
+          + Новый проект
         </Link>
       </div>
 
@@ -104,11 +104,11 @@ export function ProjectsPage() {
 
       {projects.length === 0 && !error ? (
         <EmptyState
-          title="No projects yet"
-          description="Add your first project as a case study: Problem, Solution, Result and Tech Stack."
+          title="Пока нет проектов"
+          description="Добавьте первый проект в виде кейса: Проблема, Решение, Результат и Технологии."
           action={
             <Link to="/dashboard/projects/new" className="btn btn-primary">
-              Create your first project
+              Создать первый проект
             </Link>
           }
         />
@@ -120,7 +120,7 @@ export function ProjectsPage() {
                 {project.cover_image_url ? (
                   <img src={project.cover_image_url} alt="" />
                 ) : (
-                  <span className="project-row-cover-empty">No image</span>
+                  <span className="project-row-cover-empty">Нет фото</span>
                 )}
               </div>
               <div className="project-row-main">
@@ -128,7 +128,7 @@ export function ProjectsPage() {
                   <h3>{project.title}</h3>
                   <StatusBadge status={project.status} />
                 </div>
-                <p className="muted">{project.short_description || "No description yet."}</p>
+                <p className="muted">{project.short_description || "Описание пока не заполнено."}</p>
                 <div className="tech-row">
                   {project.technologies.slice(0, 5).map((t) => (
                     <span key={t.id} className="badge badge-tech">
@@ -143,7 +143,7 @@ export function ProjectsPage() {
                     className="btn btn-ghost btn-sm btn-icon"
                     onClick={() => move(index, -1)}
                     disabled={index === 0}
-                    aria-label="Move up"
+                    aria-label="Переместить выше"
                   >
                     ↑
                   </button>
@@ -151,7 +151,7 @@ export function ProjectsPage() {
                     className="btn btn-ghost btn-sm btn-icon"
                     onClick={() => move(index, 1)}
                     disabled={index === projects.length - 1}
-                    aria-label="Move down"
+                    aria-label="Переместить ниже"
                   >
                     ↓
                   </button>
@@ -162,10 +162,10 @@ export function ProjectsPage() {
                   onClick={() => togglePublish(project)}
                   disabled={busyId === project.id}
                 >
-                  {project.status === "PUBLISHED" ? "Unpublish" : "Publish"}
+                  {project.status === "PUBLISHED" ? "Скрыть" : "Опубликовать"}
                 </Button>
                 <Link to={`/dashboard/projects/${project.id}`} className="btn btn-secondary btn-sm">
-                  Edit
+                  Редактировать
                 </Link>
                 <Button
                   variant="danger"
@@ -173,7 +173,7 @@ export function ProjectsPage() {
                   onClick={() => setDeleting(project)}
                   disabled={busyId === project.id}
                 >
-                  Delete
+                  Удалить
                 </Button>
               </div>
             </div>
@@ -183,8 +183,9 @@ export function ProjectsPage() {
 
       <ConfirmDialog
         open={!!deleting}
-        title={`Delete “${deleting?.title ?? ""}”?`}
-        description="This permanently removes the project, its images and technologies. This cannot be undone."
+        title={`Удалить «${deleting?.title ?? ""}»?`}
+        description="Проект будет удалён безвозвратно вместе с изображениями и технологиями. Это действие нельзя отменить."
+        confirmLabel="Удалить"
         onCancel={() => setDeleting(null)}
         onConfirm={confirmDelete}
       />

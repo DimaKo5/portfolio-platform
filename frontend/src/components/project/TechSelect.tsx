@@ -2,6 +2,15 @@ import { useMemo, useState } from "react";
 
 import type { Technology } from "../../types";
 
+const CATEGORY_LABELS: Record<string, string> = {
+  backend: "Бэкенд",
+  frontend: "Фронтенд",
+  database: "Базы данных",
+  devops: "DevOps",
+  design: "Дизайн",
+  other: "Другое",
+};
+
 interface TechSelectProps {
   technologies: Technology[];
   selectedIds: string[];
@@ -39,7 +48,7 @@ export function TechSelect({ technologies, selectedIds, onChange }: TechSelectPr
     <div className="tech-select">
       <div className="tech-selected">
         {selectedNames.length === 0 ? (
-          <span className="muted">No technologies selected.</span>
+          <span className="muted">Технологии не выбраны.</span>
         ) : (
           selectedNames.map((tech) => (
             <button
@@ -47,7 +56,7 @@ export function TechSelect({ technologies, selectedIds, onChange }: TechSelectPr
               type="button"
               className="badge badge-tech tech-chip-active"
               onClick={() => toggle(tech.id)}
-              title="Remove"
+              title="Убрать"
             >
               {tech.name} ✕
             </button>
@@ -56,14 +65,14 @@ export function TechSelect({ technologies, selectedIds, onChange }: TechSelectPr
       </div>
       <input
         className="input"
-        placeholder="Search technologies…"
+        placeholder="Поиск технологий…"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
       <div className="tech-groups">
         {[...grouped.entries()].map(([category, techs]) => (
           <div key={category} className="tech-group">
-            <span className="tech-group-title">{category}</span>
+            <span className="tech-group-title">{CATEGORY_LABELS[category] ?? category}</span>
             <div className="tech-group-items">
               {techs.map((tech) => (
                 <button
@@ -78,7 +87,7 @@ export function TechSelect({ technologies, selectedIds, onChange }: TechSelectPr
             </div>
           </div>
         ))}
-        {grouped.size === 0 && <span className="muted">Nothing found.</span>}
+        {grouped.size === 0 && <span className="muted">Ничего не найдено.</span>}
       </div>
     </div>
   );

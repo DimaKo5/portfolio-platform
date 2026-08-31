@@ -3,10 +3,10 @@ import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 const navItems = [
-  { to: "/dashboard", label: "Overview", end: true },
-  { to: "/dashboard/profile", label: "Profile" },
-  { to: "/dashboard/projects", label: "Projects" },
-  { to: "/dashboard/portfolio", label: "Portfolio" },
+  { to: "/dashboard", label: "Обзор", end: true },
+  { to: "/dashboard/profile", label: "Профиль" },
+  { to: "/dashboard/projects", label: "Проекты" },
+  { to: "/dashboard/portfolio", label: "Портфолио" },
 ];
 
 export function DashboardLayout() {
@@ -36,11 +36,11 @@ export function DashboardLayout() {
         <div className="dashboard-sidebar-footer">
           {user && (
             <NavLink to={`/${user.username}`} className="public-link">
-              View public page ↗
+              Открыть публичную страницу ↗
             </NavLink>
           )}
           <button className="btn btn-ghost btn-sm" onClick={logout}>
-            Log out
+            Выйти
           </button>
         </div>
       </aside>

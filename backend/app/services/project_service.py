@@ -76,13 +76,13 @@ class ProjectService:
     def reorder_projects(self, user_id: uuid.UUID, ordered_ids: list[uuid.UUID]) -> None:
         owned = {p.id for p in self.repo.list_by_user(user_id)}
         if not set(ordered_ids).issubset(owned):
-            raise AppError("PROJECT_ACCESS_DENIED", "Order contains projects you do not own.", 400)
+            raise AppError("PROJECT_ACCESS_DENIED", "В списке есть проекты, которые вам не принадлежат.", 400)
         self.repo.reorder(user_id, ordered_ids)
 
     def _get_owned(self, user_id: uuid.UUID, project_id: uuid.UUID) -> Project:
         project = self.repo.get_by_id_and_user(project_id, user_id)
         if not project:
-            raise AppError("PROJECT_NOT_FOUND", "Project not found.", 404)
+            raise AppError("PROJECT_NOT_FOUND", "Проект не найден.", 404)
         return project
 
     def _generate_slug(self, user_id: uuid.UUID, title: str, exclude_id: uuid.UUID | None = None) -> str:

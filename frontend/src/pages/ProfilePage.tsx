@@ -19,7 +19,7 @@ export function ProfilePage() {
     profileApi
       .get()
       .then(setProfile)
-      .catch(() => setError("Failed to load profile."))
+      .catch(() => setError("Не удалось загрузить профиль."))
       .finally(() => setLoading(false));
   }, []);
 
@@ -35,12 +35,12 @@ export function ProfilePage() {
     try {
       const updated = await profileApi.update(profile);
       setProfile(updated);
-      showSuccess("Profile saved");
+      showSuccess("Профиль сохранён");
     } catch (err) {
       setError(
-        err instanceof ApiError ? err.message : "Failed to save profile. Check the URLs.",
+        err instanceof ApiError ? err.message : "Не удалось сохранить профиль. Проверьте ссылки.",
       );
-      showError("Failed to save profile");
+      showError("Ошибка сохранения");
     } finally {
       setSaving(false);
     }
@@ -55,13 +55,13 @@ export function ProfilePage() {
   }
 
   if (!profile) {
-    return <div className="error-banner">{error ?? "Profile not found."}</div>;
+    return <div className="error-banner">{error ?? "Профиль не найден."}</div>;
   }
 
   return (
     <div className="page">
-      <h1 className="page-title">Profile</h1>
-      <p className="page-subtitle">This information appears on your public portfolio.</p>
+      <h1 className="page-title">Профиль</h1>
+      <p className="page-subtitle">Эта информация появится на вашей публичной странице.</p>
 
       <form onSubmit={handleSubmit} noValidate>
         <div className="card card-pad profile-form">
@@ -71,51 +71,51 @@ export function ProfilePage() {
               onUploaded={(url) => setProfile({ ...profile, avatar_url: url })}
             />
             <div>
-              <h3>Photo</h3>
-              <p className="muted">JPEG, PNG or WebP up to 5 MB.</p>
+              <h3>Фото</h3>
+              <p className="muted">JPEG, PNG или WebP до 5 МБ.</p>
             </div>
           </div>
 
           <div className="form-grid">
-            <Field label="Display name">
+            <Field label="Имя (отображаемое)">
               <Input
                 value={profile.display_name ?? ""}
                 onChange={(e) => setField("display_name", e.target.value)}
-                placeholder="Dmitriy K."
+                placeholder="Дмитрий К."
                 maxLength={120}
               />
             </Field>
-            <Field label="Profession / headline">
+            <Field label="Профессия / специализация">
               <Input
                 value={profile.headline ?? ""}
                 onChange={(e) => setField("headline", e.target.value)}
-                placeholder="Python & Full-Stack Developer"
+                placeholder="Python & Full-Stack разработчик"
                 maxLength={160}
               />
             </Field>
           </div>
 
-          <Field label="Short bio">
+          <Field label="Кратко о себе">
             <Textarea
               value={profile.bio ?? ""}
               onChange={(e) => setField("bio", e.target.value)}
-              placeholder="I build automation tools and web applications."
+              placeholder="Разрабатываю инструменты автоматизации и веб-приложения."
               maxLength={2000}
               rows={4}
             />
           </Field>
 
-          <Field label="Location" hint="optional">
+          <Field label="Город" hint="необязательно">
             <Input
               value={profile.location ?? ""}
               onChange={(e) => setField("location", e.target.value)}
-              placeholder="Moscow"
+              placeholder="Москва"
               maxLength={120}
             />
           </Field>
 
           <div className="form-grid">
-            <Field label="Website">
+            <Field label="Сайт">
               <Input
                 type="url"
                 value={profile.website_url ?? ""}
@@ -123,7 +123,7 @@ export function ProfilePage() {
                 placeholder="https://example.com"
               />
             </Field>
-            <Field label="GitHub link">
+            <Field label="Ссылка на GitHub">
               <Input
                 type="url"
                 value={profile.github_url ?? ""}
@@ -153,7 +153,7 @@ export function ProfilePage() {
 
           <div className="form-actions">
             <Button type="submit" disabled={saving}>
-              {saving ? "Saving…" : "Save profile"}
+              {saving ? "Сохраняем…" : "Сохранить профиль"}
             </Button>
           </div>
         </div>

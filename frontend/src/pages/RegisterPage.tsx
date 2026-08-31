@@ -21,12 +21,12 @@ export function RegisterPage() {
 
   const validate = (): boolean => {
     const errors: Record<string, string> = {};
-    if (!/^\S+@\S+\.\S+$/.test(email)) errors.email = "Enter a valid email address.";
+    if (!/^\S+@\S+\.\S+$/.test(email)) errors.email = "Введите корректный email.";
     if (!USERNAME_RE.test(username)) {
       errors.username =
-        "3–30 characters: lowercase letters, digits, dash or underscore. No spaces.";
+        "3–30 символов: строчные латинские буквы, цифры, дефис или подчёркивание. Без пробелов.";
     }
-    if (password.length < 8) errors.password = "Password must be at least 8 characters.";
+    if (password.length < 8) errors.password = "Пароль должен быть не короче 8 символов.";
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -42,14 +42,16 @@ export function RegisterPage() {
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.code === "EMAIL_ALREADY_EXISTS") {
-          setFieldErrors({ email: "This email is already registered." });
-        } else if (err.code === "USERNAME_ALREADY_EXISTS" || err.code === "USERNAME_RESERVED") {
+          setFieldErrors({ email: "Этот email уже зарегистрирован." });
+        } else if (err.code === "USERNAME_ALREADY_EXISTS") {
+          setFieldErrors({ username: "Этот username уже занят." });
+        } else if (err.code === "USERNAME_RESERVED") {
           setFieldErrors({ username: err.message });
         } else {
           setError(err.message);
         }
       } else {
-        setError("Registration failed. Please try again.");
+        setError("Регистрация не удалась. Попробуйте ещё раз.");
       }
     } finally {
       setSubmitting(false);
@@ -59,9 +61,9 @@ export function RegisterPage() {
   return (
     <div className="auth-page">
       <div className="auth-card card">
-        <h1 className="auth-title">Create your portfolio</h1>
+        <h1 className="auth-title">Создайте портфолио</h1>
         <p className="auth-subtitle">
-          Show real projects: Problem → Solution → Result → Tech Stack.
+          Показывайте реальные проекты: Проблема → Решение → Результат → Технологии.
         </p>
         {error && <div className="error-banner">{error}</div>}
         <form onSubmit={handleSubmit} noValidate>
@@ -77,7 +79,7 @@ export function RegisterPage() {
           </Field>
           <Field
             label="Username"
-            hint="Your public URL: /username"
+            hint="ваш публичный адрес: /username"
             error={fieldErrors.username}
           >
             <Input
@@ -88,22 +90,22 @@ export function RegisterPage() {
               invalid={!!fieldErrors.username}
             />
           </Field>
-          <Field label="Password" error={fieldErrors.password}>
+          <Field label="Пароль" error={fieldErrors.password}>
             <Input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 8 characters"
+              placeholder="Минимум 8 символов"
               autoComplete="new-password"
               invalid={!!fieldErrors.password}
             />
           </Field>
           <Button type="submit" size="lg" disabled={submitting} className="auth-submit">
-            {submitting ? "Creating account…" : "Create account"}
+            {submitting ? "Создаём аккаунт…" : "Создать аккаунт"}
           </Button>
         </form>
         <p className="auth-switch">
-          Already have an account? <Link to="/login">Log in</Link>
+          Уже есть аккаунт? <Link to="/login">Войти</Link>
         </p>
       </div>
     </div>

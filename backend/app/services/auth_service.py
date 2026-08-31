@@ -21,18 +21,18 @@ class AuthService:
         from app.utils.slug import is_valid_username
 
         if not is_valid_username(data.username):
-            raise AppError("USERNAME_RESERVED", "This username is reserved. Choose another one.", 422)
+            raise AppError("USERNAME_RESERVED", "Этот username зарезервирован системой. Выберите другой.", 422)
         if self.repo.get_by_email(data.email):
-            raise AppError("EMAIL_ALREADY_EXISTS", "This email is already registered.", ALREADY_EXISTS_STATUS)
+            raise AppError("EMAIL_ALREADY_EXISTS", "Этот email уже зарегистрирован.", ALREADY_EXISTS_STATUS)
         if self.repo.get_by_username(data.username):
-            raise AppError("USERNAME_ALREADY_EXISTS", "This username is already taken.", ALREADY_EXISTS_STATUS)
+            raise AppError("USERNAME_ALREADY_EXISTS", "Этот username уже занят.", ALREADY_EXISTS_STATUS)
         user = self.repo.create(data.email, data.username, hash_password(data.password))
         return self._token_response(user)
 
     def login(self, data: LoginRequest) -> TokenResponse:
         user = self.repo.get_by_email(data.email)
         if not user or not verify_password(data.password, user.password_hash):
-            raise AppError("INVALID_CREDENTIALS", "Incorrect email or password.", 401)
+            raise AppError("INVALID_CREDENTIALS", "Неверный email или пароль.", 401)
         return self._token_response(user)
 
     def _token_response(self, user: User) -> TokenResponse:

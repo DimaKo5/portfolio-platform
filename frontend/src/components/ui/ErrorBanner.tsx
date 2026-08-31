@@ -11,7 +11,7 @@ export function ErrorBanner({ message, onRetry }: ErrorBannerProps) {
       <span>{message}</span>
       {onRetry ? (
         <Button variant="secondary" size="sm" onClick={onRetry}>
-          Retry
+          Повторить
         </Button>
       ) : null}
     </div>

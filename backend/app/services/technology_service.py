@@ -23,10 +23,10 @@ class TechnologyService:
     ) -> ProjectResponse:
         project = self.project_repo.get_by_id_and_user(project_id, user_id)
         if not project:
-            raise AppError("PROJECT_NOT_FOUND", "Project not found.", 404)
+            raise AppError("PROJECT_NOT_FOUND", "Проект не найден.", 404)
         found = {t.id for t in self.tech_repo.get_by_ids(data.technology_ids)}
         missing = set(data.technology_ids) - found
         if missing:
-            raise AppError("TECHNOLOGY_NOT_FOUND", "One or more technologies not found.", 400)
+            raise AppError("TECHNOLOGY_NOT_FOUND", "Одна или несколько технологий не найдены.", 400)
         project = self.project_repo.set_technologies(project, data.technology_ids)
         return ProjectResponse.model_validate(project)

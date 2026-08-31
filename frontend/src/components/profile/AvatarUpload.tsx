@@ -20,7 +20,7 @@ export function AvatarUpload({ url, onUploaded }: AvatarUploadProps) {
       const response = await profileApi.uploadAvatar(file);
       onUploaded(response.avatar_url);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Failed to upload image.");
+      setError(err instanceof ApiError ? err.message : "Не удалось загрузить фото.");
     } finally {
       setUploading(false);
       event.target.value = "";
@@ -31,12 +31,12 @@ export function AvatarUpload({ url, onUploaded }: AvatarUploadProps) {
     <div className="avatar-upload">
       <label className="avatar-upload-frame">
         {url ? (
-          <img src={url} alt="Avatar" className="avatar-img" />
+          <img src={url} alt="Аватар" className="avatar-img" />
         ) : (
-          <span className="avatar-placeholder">Upload photo</span>
+          <span className="avatar-placeholder">Загрузить фото</span>
         )}
         <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFile} hidden />
-        {uploading && <span className="avatar-uploading">Uploading…</span>}
+        {uploading && <span className="avatar-uploading">Загрузка…</span>}
       </label>
       {error && <p className="field-error">{error}</p>}
     </div>

@@ -15,15 +15,15 @@ export function LandingPage() {
           <nav className="landing-nav">
             {user ? (
               <Link to="/dashboard" className="btn btn-primary btn-sm">
-                Dashboard
+                В личный кабинет
               </Link>
             ) : (
               <>
                 <Link to="/login" className="btn btn-ghost btn-sm">
-                  Log in
+                  Войти
                 </Link>
                 <Link to="/register" className="btn btn-primary btn-sm">
-                  Create portfolio
+                  Создать портфолио
                 </Link>
               </>
             )}
@@ -34,19 +34,19 @@ export function LandingPage() {
       <section className="landing-hero">
         <div className="container">
           <h1>
-            Show your <span className="accent">real work</span>,<br />
-            not just words about yourself.
+            Покажите <span className="accent">реальные работы</span>,<br />
+            а не просто слова о себе.
           </h1>
           <p className="landing-lead">
-            Portfolio Platform turns your projects into professional case studies —
-            Problem, Solution, Result, Tech Stack — and gives you one public link to share
-            with employers and clients.
+            Portfolio Platform превращает ваши проекты в профессиональные кейсы —
+            Проблема, Решение, Результат, Технологии — и даёт одну публичную ссылку
+            для работодателей и клиентов.
           </p>
           <div className="landing-cta">
             <Link to={user ? "/dashboard" : "/register"} className="btn btn-primary btn-lg">
-              Create your portfolio — free
+              Создать портфолио — бесплатно
             </Link>
-            <span className="landing-cta-note">No credit card. Ready in minutes.</span>
+            <span className="landing-cta-note">Без карты. Готово за несколько минут.</span>
           </div>
 
           <div className="landing-demo card">
@@ -60,14 +60,14 @@ export function LandingPage() {
               <div className="landing-demo-profile">
                 <div className="landing-demo-avatar" />
                 <div>
-                  <strong>Dmitriy K.</strong>
-                  <span>Full-Stack Developer</span>
+                  <strong>Дмитрий К.</strong>
+                  <span>Full-Stack разработчик</span>
                 </div>
               </div>
               <div className="landing-demo-projects">
                 <div className="landing-demo-project">
                   <strong>Telegram CRM</strong>
-                  <span className="landing-demo-line">Problem · Solution · Result</span>
+                  <span className="landing-demo-line">Проблема · Решение · Результат</span>
                   <div className="tech-row">
                     <span className="badge badge-tech">Python</span>
                     <span className="badge badge-tech">FastAPI</span>
@@ -76,7 +76,7 @@ export function LandingPage() {
                 </div>
                 <div className="landing-demo-project">
                   <strong>Analytics Dashboard</strong>
-                  <span className="landing-demo-line">Problem · Solution · Result</span>
+                  <span className="landing-demo-line">Проблема · Решение · Результат</span>
                   <div className="tech-row">
                     <span className="badge badge-tech">TypeScript</span>
                     <span className="badge badge-tech">PostgreSQL</span>
@@ -90,27 +90,27 @@ export function LandingPage() {
 
       <section className="landing-features">
         <div className="container">
-          <h2>Why case studies beat a list of links</h2>
+          <h2>Почему кейсы работают лучше списка ссылок</h2>
           <div className="feature-grid">
             <div className="card card-pad feature-card">
-              <h3>Structure that sells</h3>
+              <h3>Структура, которая продаёт</h3>
               <p>
-                Each project answers the questions a client actually has: what was the
-                problem, what did you do, and what came out of it.
+                Каждый проект отвечает на вопросы, которые реально задаёт клиент: какая
+                была проблема, что вы сделали и к чему это привело.
               </p>
             </div>
             <div className="card card-pad feature-card">
-              <h3>One link for everything</h3>
+              <h3>Одна ссылка на всё</h3>
               <p>
-                Your public portfolio lives at /yourname — send it instead of scattering
-                screenshots and repositories across chats.
+                Ваше портфолио живёт по адресу /yourname — отправляйте его вместо
+                скриншотов и репозиториев, разбросанных по чатам.
               </p>
             </div>
             <div className="card card-pad feature-card">
-              <h3>Projects first</h3>
+              <h3>Проекты — на первом месте</h3>
               <p>
-                Works are the hero. No ten-page “about me” — visitors see your projects,
-                technologies and results immediately.
+                Работы — главный герой. Без десяти страниц «обо мне»: посетитель сразу
+                видит проекты, технологии и результаты.
               </p>
             </div>
           </div>
@@ -119,16 +119,16 @@ export function LandingPage() {
 
       <section className="landing-cta-final">
         <div className="container">
-          <h2>Ready to show what you can do?</h2>
+          <h2>Готовы показать, что умеете?</h2>
           <Link to={user ? "/dashboard" : "/register"} className="btn btn-primary btn-lg">
-            {user ? "Open dashboard" : "Create your portfolio"}
+            {user ? "Открыть личный кабинет" : "Создать портфолио"}
           </Link>
         </div>
       </section>
 
       <footer className="public-footer">
         <div className="container">
-          <span>Portfolio Platform — show your real work.</span>
+          <span>Portfolio Platform — покажите свои реальные работы.</span>
         </div>
       </footer>
     </div>

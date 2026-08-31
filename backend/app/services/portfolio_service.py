@@ -18,10 +18,10 @@ class PortfolioService:
     def get_portfolio(self, username: str) -> PublicPortfolioResponse:
         user = self.users.get_by_username(username.lower())
         if not user:
-            raise AppError("PORTFOLIO_NOT_FOUND", "Portfolio not found.", 404)
+            raise AppError("PORTFOLIO_NOT_FOUND", "Портфолио не найдено.", 404)
         profile = user.profile
         if not profile:
-            raise AppError("PORTFOLIO_NOT_FOUND", "Portfolio not found.", 404)
+            raise AppError("PORTFOLIO_NOT_FOUND", "Портфолио не найдено.", 404)
         projects = self.repo.list_published_by_user(user.id)
         skills = sorted({t.name for p in projects for t in p.technologies})
         return PublicPortfolioResponse(
@@ -34,12 +34,12 @@ class PortfolioService:
     def get_public_project(self, username: str, slug: str) -> PublicProjectResponse:
         user = self.users.get_by_username(username.lower())
         if not user:
-            raise AppError("PROJECT_NOT_FOUND", "Project not found.", 404)
+            raise AppError("PROJECT_NOT_FOUND", "Проект не найден.", 404)
         project = next(
             (p for p in self.repo.list_published_by_user(user.id) if p.slug == slug), None
         )
         if not project:
-            raise AppError("PROJECT_NOT_FOUND", "Project not found.", 404)
+            raise AppError("PROJECT_NOT_FOUND", "Проект не найден.", 404)
         return PublicProjectResponse(
             username=user.username,
             project=ProjectResponse.model_validate(project),

@@ -12,7 +12,7 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
           <img src={project.cover_image_url} alt="" className="preview-cover" />
         )}
         <div className="preview-body">
-          <h1>{project.title || "Untitled project"}</h1>
+          <h1>{project.title || "Проект без названия"}</h1>
           <p className="preview-lead">{project.short_description}</p>
 
           <div className="tech-row" style={{ marginBottom: 24 }}>
@@ -25,25 +25,25 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
 
           {project.problem && (
             <section className="preview-section">
-              <h4>Problem</h4>
+              <h4>Проблема</h4>
               <p>{project.problem}</p>
             </section>
           )}
           {project.solution && (
             <section className="preview-section">
-              <h4>Solution</h4>
+              <h4>Решение</h4>
               <p>{project.solution}</p>
             </section>
           )}
           {project.role && (
             <section className="preview-section">
-              <h4>My role</h4>
+              <h4>Моя роль</h4>
               <p>{project.role}</p>
             </section>
           )}
           {project.features && (
             <section className="preview-section">
-              <h4>Features</h4>
+              <h4>Функции</h4>
               <ul>
                 {project.features.split("\n").map((line, i) =>
                   line.trim() ? <li key={i}>{line.trim()}</li> : null,
@@ -53,7 +53,7 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
           )}
           {project.result && (
             <section className="preview-section">
-              <h4>Result</h4>
+              <h4>Результат</h4>
               <p>{project.result}</p>
             </section>
           )}
@@ -71,7 +71,7 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
                 rel="noreferrer"
                 className="btn btn-secondary"
               >
-                Source code ↗
+                Исходный код ↗
               </a>
             )}
           </div>

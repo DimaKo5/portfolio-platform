@@ -20,7 +20,9 @@ export function PublicProjectPage() {
       .getPublicProject(username, slug)
       .then(setData)
       .catch((err) =>
-        setError(err instanceof ApiError && err.status === 404 ? "not-found" : "Failed to load project."),
+        setError(
+          err instanceof ApiError && err.status === 404 ? "not-found" : "Не удалось загрузить проект.",
+        ),
       )
       .finally(() => setLoading(false));
   }, [username, slug]);
@@ -30,7 +32,7 @@ export function PublicProjectPage() {
       document.title = `${data.project.title} — ${data.username}`;
     }
     return () => {
-      document.title = "Portfolio Platform — Show your real work";
+      document.title = "Portfolio Platform — покажите реальные работы";
     };
   }, [data]);
 
@@ -45,10 +47,10 @@ export function PublicProjectPage() {
   if (error === "not-found") {
     return (
       <div className="public-404 container">
-        <h1>Project not found</h1>
-        <p>This project does not exist or is not published.</p>
+        <h1>Проект не найден</h1>
+        <p>Проект не существует или ещё не опубликован.</p>
         <Link to={`/${username}`} className="btn btn-primary">
-          Back to portfolio
+          Вернуться в портфолио
         </Link>
       </div>
     );
@@ -57,7 +59,7 @@ export function PublicProjectPage() {
   if (error || !data) {
     return (
       <div className="container" style={{ paddingTop: 40 }}>
-        <ErrorBanner message={error ?? "Failed to load."} />
+        <ErrorBanner message={error ?? "Ошибка загрузки."} />
       </div>
     );
   }
@@ -68,7 +70,7 @@ export function PublicProjectPage() {
     <article className="pf-project-page">
       <div className="container pf-project-container">
         <Link to={`/${username}`} className="pf-back-link">
-          ← Back to portfolio
+          ← Вернуться в портфолио
         </Link>
 
         {project.cover_image_url && (
@@ -89,25 +91,25 @@ export function PublicProjectPage() {
         <div className="pf-case">
           {project.problem && (
             <section className="pf-case-section">
-              <h4>Problem</h4>
+              <h4>Проблема</h4>
               <p>{project.problem}</p>
             </section>
           )}
           {project.solution && (
             <section className="pf-case-section">
-              <h4>Solution</h4>
+              <h4>Решение</h4>
               <p>{project.solution}</p>
             </section>
           )}
           {project.role && (
             <section className="pf-case-section">
-              <h4>My role</h4>
+              <h4>Моя роль</h4>
               <p>{project.role}</p>
             </section>
           )}
           {project.features && (
             <section className="pf-case-section">
-              <h4>Features</h4>
+              <h4>Функции</h4>
               <ul>
                 {project.features.split("\n").map((line, i) =>
                   line.trim() ? <li key={i}>{line.trim()}</li> : null,
@@ -117,15 +119,15 @@ export function PublicProjectPage() {
           )}
           {project.result && (
             <section className="pf-case-section">
-              <h4>Result</h4>
+              <h4>Результат</h4>
               <p>{project.result}</p>
             </section>
           )}
         </div>
 
-        {project.images.length > 0 && (
+        {project.images.length > 1 && (
           <section className="pf-gallery">
-            <h4>Gallery</h4>
+            <h4>Галерея</h4>
             <div className="pf-gallery-grid">
               {project.images.map((image) => (
                 <img key={image.id} src={image.url} alt={image.alt_text ?? ""} loading="lazy" />
@@ -137,7 +139,7 @@ export function PublicProjectPage() {
         <div className="pf-project-links">
           {project.live_url && (
             <a href={project.live_url} target="_blank" rel="noreferrer" className="btn btn-primary btn-lg">
-              Live demo ↗
+              Смотреть live demo ↗
             </a>
           )}
           {project.github_url && (
@@ -147,7 +149,7 @@ export function PublicProjectPage() {
               rel="noreferrer"
               className="btn btn-secondary btn-lg"
             >
-              Source code ↗
+              Исходный код ↗
             </a>
           )}
         </div>

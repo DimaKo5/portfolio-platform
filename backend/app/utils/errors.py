@@ -30,9 +30,9 @@ async def app_error_handler(_: Request, exc: AppError) -> JSONResponse:
 async def validation_error_handler(_: Request, exc: RequestValidationError) -> JSONResponse:
     first = exc.errors()[0] if exc.errors() else {}
     field = ".".join(str(p) for p in first.get("loc", []) if p != "body")
-    message = f"Invalid value for '{field}'." if field else "Invalid request data."
+    message = "Некорректное значение поля." if field else "Некорректные данные запроса."
     return error_response(422, "VALIDATION_ERROR", message)
 
 
 async def unhandled_error_handler(_: Request, exc: Exception) -> JSONResponse:
-    return error_response(500, "INTERNAL_ERROR", "An unexpected error occurred.")
+    return error_response(500, "INTERNAL_ERROR", "Внутренняя ошибка сервера.")

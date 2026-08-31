@@ -24,7 +24,7 @@ async def upload_project_image(
     repo = ProjectRepository(db)
     project = repo.get_by_id_and_user(project_id, current_user.id)
     if not project:
-        raise AppError("PROJECT_NOT_FOUND", "Project not found.", 404)
+        raise AppError("PROJECT_NOT_FOUND", "Проект не найден.", 404)
     url = await save_image(file)
     try:
         image = repo.add_image(project, url, None)
@@ -44,10 +44,10 @@ def delete_project_image(
     repo = ProjectRepository(db)
     project = repo.get_by_id_and_user(project_id, current_user.id)
     if not project:
-        raise AppError("PROJECT_NOT_FOUND", "Project not found.", 404)
+        raise AppError("PROJECT_NOT_FOUND", "Проект не найден.", 404)
     image = repo.get_image(project_id, image_id)
     if not image:
-        raise AppError("IMAGE_NOT_FOUND", "Image not found.", 404)
+        raise AppError("IMAGE_NOT_FOUND", "Изображение не найдено.", 404)
     url = image.url
     repo.delete_image(image)
     delete_image_file(url)

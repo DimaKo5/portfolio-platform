@@ -29,38 +29,41 @@ export function PortfolioSettingsPage() {
 
   return (
     <div className="page">
-      <h1 className="page-title">Portfolio</h1>
+      <h1 className="page-title">Портфолио</h1>
       <p className="page-subtitle">
-        Everything you publish here becomes visible on your public page.
+        Всё, что вы публикуете здесь, становится видно на публичной странице.
       </p>
 
       <div className="card card-pad portfolio-summary">
         <div>
-          <h3>Your public URL</h3>
+          <h3>Ваша публичная ссылка</h3>
           <p className="muted">
             <strong>{user ? `/${user.username}` : ""}</strong>
-            {published.length === 0 && " — publish at least one project to make it interesting."}
+            {published.length === 0 &&
+              " — опубликуйте хотя бы один проект, чтобы страница была интересной."}
           </p>
         </div>
         {user && (
           <Link to={`/${user.username}`} className="btn btn-primary">
-            Open public page ↗
+            Открыть публичную страницу ↗
           </Link>
         )}
       </div>
 
-      <h3 style={{ margin: "32px 0 12px" }}>Published on your page ({published.length})</h3>
+      <h3 style={{ margin: "32px 0 12px" }}>Опубликовано на странице ({published.length})</h3>
       {published.length === 0 ? (
         <p className="muted">
-          Nothing published yet.{" "}
-          <Link to="/dashboard/projects">Go to projects →</Link>
+          Пока ничего не опубликовано.{" "}
+          <Link to="/dashboard/projects">Перейти к проектам →</Link>
         </p>
       ) : (
         <ul className="published-list">
           {published.map((p) => (
             <li key={p.id}>
               <span>{p.title}</span>
-              <span className="muted">/{user?.username}/projects/{p.slug}</span>
+              <span className="muted">
+                /{user?.username}/projects/{p.slug}
+              </span>
             </li>
           ))}
         </ul>

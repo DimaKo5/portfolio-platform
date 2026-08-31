@@ -24,11 +24,11 @@ def uploads_dir() -> str:
 
 def validate_image(file: UploadFile) -> None:
     if (file.content_type or "") not in ALLOWED_IMAGE_TYPES:
-        raise AppError("INVALID_IMAGE", "Only JPEG, PNG or WebP images are allowed.", 400)
+        raise AppError("INVALID_IMAGE", "Поддерживаются только изображения JPEG, PNG или WebP.", 400)
     if file.size is not None and file.size > settings.max_upload_size_bytes:
         raise AppError(
             "FILE_TOO_LARGE",
-            f"Image exceeds the maximum size of {settings.MAX_UPLOAD_SIZE_MB} MB.",
+            f"Файл превышает максимальный размер {settings.MAX_UPLOAD_SIZE_MB} МБ.",
             413,
         )
 
@@ -43,7 +43,7 @@ async def save_image(file: UploadFile) -> str:
     if len(contents) > settings.max_upload_size_bytes:
         raise AppError(
             "FILE_TOO_LARGE",
-            f"Image exceeds the maximum size of {settings.MAX_UPLOAD_SIZE_MB} MB.",
+            f"Файл превышает максимальный размер {settings.MAX_UPLOAD_SIZE_MB} МБ.",
             413,
         )
     with open(path, "wb") as f:

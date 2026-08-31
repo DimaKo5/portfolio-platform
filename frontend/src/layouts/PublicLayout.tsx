@@ -5,15 +5,15 @@ export function PublicLayout() {
     <div className="public-layout">
       <header className="public-header">
         <div className="container public-header-inner">
-          <Link to="/" className="brand-mark" aria-label="Portfolio Platform home">
+          <Link to="/" className="brand-mark" aria-label="На главную">
             PP
           </Link>
           <nav className="public-header-nav">
             <Link to="/login" className="btn btn-ghost btn-sm">
-              Log in
+              Войти
             </Link>
             <Link to="/register" className="btn btn-primary btn-sm">
-              Get started
+              Создать портфолио
             </Link>
           </nav>
         </div>
@@ -21,7 +21,7 @@ export function PublicLayout() {
       <Outlet />
       <footer className="public-footer">
         <div className="container">
-          <span>Portfolio Platform — show your real work.</span>
+          <span>Portfolio Platform — покажите свои реальные работы.</span>
         </div>
       </footer>
     </div>

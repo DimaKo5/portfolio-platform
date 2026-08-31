@@ -55,7 +55,7 @@ app.add_exception_handler(StarletteHTTPException, lambda req, exc: JSONResponse(
 ))
 app.add_exception_handler(404, lambda req, exc: JSONResponse(
     status_code=404,
-    content={"error": {"code": "NOT_FOUND", "message": "Resource not found."}},
+    content={"error": {"code": "NOT_FOUND", "message": "Ресурс не найден."}},
 ))
 app.add_exception_handler(Exception, unhandled_error_handler)
 app.add_exception_handler(RequestValidationError, validation_error_handler)

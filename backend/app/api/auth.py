@@ -16,7 +16,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 bearer_scheme = HTTPBearer(auto_error=False)
 
 CREDENTIALS_ERROR = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated"
+    status_code=status.HTTP_401_UNAUTHORIZED, detail="Не авторизован"
 )
 
 
@@ -29,7 +29,7 @@ def get_current_user(
     user_id = decode_access_token(credentials.credentials)
     if not user_id:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Недействительный или истёкший токен"
         )
     try:
         user_uuid = uuid.UUID(user_id)
@@ -37,7 +37,9 @@ def get_current_user(
         raise CREDENTIALS_ERROR
     user = UserRepository(db).get_by_id(user_uuid)
     if not user or not user.is_active:
-        raise CREDENTIALS_ERROR
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Пользователь не найден"
+        )
     return user
 
 

@@ -6,21 +6,16 @@ import { profileApi } from "../services/profile";
 import { projectsApi } from "../services/projects";
 import type { Profile, Project } from "../types";
 
-interface DashboardData {
-  profile: Profile;
-  projects: Project[];
-}
-
 export function DashboardPage() {
   const { user } = useAuth();
-  const [data, setData] = useState<DashboardData | null>(null);
+  const [data, setData] = useState<{ profile: Profile; projects: Project[] } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([profileApi.get(), projectsApi.list()])
       .then(([profile, projects]) => setData({ profile, projects: projects.items }))
-      .catch(() => setError("Failed to load dashboard."))
+      .catch(() => setError("Не удалось загрузить данные."))
       .finally(() => setLoading(false));
   }, []);
 
@@ -33,7 +28,7 @@ export function DashboardPage() {
   }
 
   if (error || !data) {
-    return <div className="error-banner">{error ?? "Something went wrong."}</div>;
+    return <div className="error-banner">{error ?? "Что-то пошло не так."}</div>;
   }
 
   const published = data.projects.filter((p) => p.status === "PUBLISHED").length;
@@ -51,53 +46,53 @@ export function DashboardPage() {
   return (
     <div className="page dashboard-page">
       <h1 className="page-title">
-        Hello{data.profile.display_name ? `, ${data.profile.display_name}` : ""} 👋
+        Здравствуйте{data.profile.display_name ? `, ${data.profile.display_name}` : ""}!
       </h1>
-      <p className="page-subtitle">Here is the state of your portfolio.</p>
+      <p className="page-subtitle">Текущее состояние вашего портфолио.</p>
 
       <div className="stat-grid">
         <div className="card card-pad stat-card">
           <span className="stat-value">{data.projects.length}</span>
-          <span className="stat-label">Projects</span>
+          <span className="stat-label">Проектов</span>
           <Link to="/dashboard/projects" className="stat-link">
-            Manage →
+            Управлять →
           </Link>
         </div>
         <div className="card card-pad stat-card">
           <span className="stat-value">{published}</span>
-          <span className="stat-label">Published</span>
+          <span className="stat-label">Опубликовано</span>
         </div>
         <div className="card card-pad stat-card">
           <span className="stat-value">{drafts}</span>
-          <span className="stat-label">Drafts</span>
+          <span className="stat-label">Черновиков</span>
         </div>
         <div className="card card-pad stat-card">
           <span className="stat-value">{completion}%</span>
-          <span className="stat-label">Profile complete</span>
+          <span className="stat-label">Профиль заполнен</span>
           <Link to="/dashboard/profile" className="stat-link">
-            Edit →
+            Редактировать →
           </Link>
         </div>
       </div>
 
       <div className="dashboard-actions">
         <div className="card card-pad">
-          <h3>Add your first project</h3>
+          <h3>Добавьте первый проект</h3>
           <p className="muted">
-            Each project is a case: Problem, Solution, Result and Tech Stack.
+            Каждый проект — это кейс: Проблема, Решение, Результат и Технологии.
           </p>
           <Link to="/dashboard/projects/new" className="btn btn-primary">
-            Create project
+            Создать проект
           </Link>
         </div>
         <div className="card card-pad">
-          <h3>Share your portfolio</h3>
+          <h3>Поделитесь портфолио</h3>
           <p className="muted">
-            Your public page: <strong>/{user?.username}</strong>
+            Ваша публичная страница: <strong>/{user?.username}</strong>
           </p>
           {user && (
             <Link to={`/${user.username}`} className="btn btn-secondary">
-              Open public page ↗
+              Открыть публичную страницу ↗
             </Link>
           )}
         </div>

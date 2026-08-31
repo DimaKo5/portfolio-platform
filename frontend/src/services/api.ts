@@ -45,7 +45,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     const payload = data as ApiErrorPayload | null;
     throw new ApiError(
       payload?.error?.code ?? "REQUEST_FAILED",
-      payload?.error?.message ?? "Something went wrong. Please try again.",
+      payload?.error?.message ?? "Что-то пошло не так. Попробуйте ещё раз.",
       response.status,
     );
   }

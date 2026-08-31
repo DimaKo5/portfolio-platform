@@ -26,7 +26,7 @@ export function LoginPage() {
       await login(email, password);
       navigate(from ?? "/dashboard", { replace: true });
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Unable to log in.");
+      setError(err instanceof ApiError ? err.message : "Не удалось войти.");
     } finally {
       setSubmitting(false);
     }
@@ -35,8 +35,8 @@ export function LoginPage() {
   return (
     <div className="auth-page">
       <div className="auth-card card">
-        <h1 className="auth-title">Welcome back</h1>
-        <p className="auth-subtitle">Log in to manage your portfolio.</p>
+        <h1 className="auth-title">С возвращением</h1>
+        <p className="auth-subtitle">Войдите, чтобы управлять портфолио.</p>
         {error && <div className="error-banner">{error}</div>}
         <form onSubmit={handleSubmit} noValidate>
           <Field label="Email">
@@ -49,22 +49,22 @@ export function LoginPage() {
               required
             />
           </Field>
-          <Field label="Password">
+          <Field label="Пароль">
             <Input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Your password"
+              placeholder="Ваш пароль"
               autoComplete="current-password"
               required
             />
           </Field>
           <Button type="submit" size="lg" disabled={submitting} className="auth-submit">
-            {submitting ? "Logging in…" : "Log in"}
+            {submitting ? "Входим…" : "Войти"}
           </Button>
         </form>
         <p className="auth-switch">
-          No account? <Link to="/register">Create one</Link>
+          Нет аккаунта? <Link to="/register">Создайте его</Link>
         </p>
       </div>
     </div>

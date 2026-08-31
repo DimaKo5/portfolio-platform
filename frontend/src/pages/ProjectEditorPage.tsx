@@ -44,7 +44,7 @@ export function ProjectEditorPage() {
         setProject(data);
         setSelectedTechIds(data.technologies.map((t) => t.id));
       })
-      .catch(() => setError("Project not found."))
+      .catch(() => setError("Проект не найден."))
       .finally(() => setLoading(false));
   }, [projectId, isNew]);
 
@@ -73,12 +73,12 @@ export function ProjectEditorPage() {
 
   const validate = (): boolean => {
     const errors: Record<string, string> = {};
-    if (!payload.title) errors.title = "Title is required.";
+    if (!payload.title) errors.title = "Название обязательно.";
     if (payload.github_url && !/^https?:\/\/.+/.test(payload.github_url)) {
-      errors.github_url = "Must be a valid URL starting with http(s)://";
+      errors.github_url = "Должна быть ссылка, начинающаяся с http(s)://";
     }
     if (payload.live_url && !/^https?:\/\/.+/.test(payload.live_url)) {
-      errors.live_url = "Must be a valid URL starting with http(s)://";
+      errors.live_url = "Должна быть ссылка, начинающаяся с http(s)://";
     }
     setValidation(errors);
     return Object.keys(errors).length === 0;
@@ -93,19 +93,18 @@ export function ProjectEditorPage() {
         const created = await projectsApi.create(payload);
         setProject(created);
         setSelectedTechIds([]);
-        showSuccess("Project created — now fill in the case study");
-        // Keep the user on the editor with a real id in the URL.
+        showSuccess("Проект создан — теперь заполните кейс");
         navigate(`/dashboard/projects/${created.id}`, { replace: true });
         return created;
       }
       const updated = await projectsApi.update(projectId!, payload);
       setProject(updated);
-      showSuccess("Project saved");
+      showSuccess("Проект сохранён");
       return updated;
     } catch (err) {
-      const message = err instanceof ApiError ? err.message : "Failed to save project.";
+      const message = err instanceof ApiError ? err.message : "Не удалось сохранить проект.";
       setError(message);
-      showError("Failed to save");
+      showError("Ошибка сохранения");
       return null;
     } finally {
       setSaving(false);
@@ -118,9 +117,9 @@ export function ProjectEditorPage() {
     try {
       const updated = await projectsApi.setTechnologies(saved.id, selectedTechIds);
       setProject(updated);
-      showSuccess("Technologies updated");
+      showSuccess("Технологии обновлены");
     } catch (err) {
-      showError(err instanceof ApiError ? err.message : "Failed to update technologies");
+      showError(err instanceof ApiError ? err.message : "Не удалось обновить технологии");
     }
   };
 
@@ -134,10 +133,12 @@ export function ProjectEditorPage() {
           : await projectsApi.publish(project.id);
       setProject(updated);
       showSuccess(
-        updated.status === "PUBLISHED" ? "Project is live" : "Project moved to drafts",
+        updated.status === "PUBLISHED"
+          ? "Проект опубликован"
+          : "Проект перемещён в черновики",
       );
     } catch (err) {
-      showError(err instanceof ApiError ? err.message : "Action failed");
+      showError(err instanceof ApiError ? err.message : "Действие не удалось");
     } finally {
       setPublishing(false);
     }
@@ -152,7 +153,7 @@ export function ProjectEditorPage() {
   }
 
   if (!isNew && !project) {
-    return <div className="error-banner">{error ?? "Project not found."}</div>;
+    return <div className="error-banner">{error ?? "Проект не найден."}</div>;
   }
 
   return (
@@ -160,11 +161,11 @@ export function ProjectEditorPage() {
       <div className="page-header-row">
         <div>
           <div className="editor-title-row">
-            <h1 className="page-title">{isNew ? "New project" : "Edit project"}</h1>
+            <h1 className="page-title">{isNew ? "Новый проект" : "Редактирование проекта"}</h1>
             {project && <StatusBadge status={project.status} />}
           </div>
           <p className="page-subtitle" style={{ marginBottom: 0 }}>
-            A good case answers: what problem? what solution? what result?
+            Хороший кейс отвечает на вопросы: какая проблема? какое решение? какой результат?
           </p>
         </div>
         <div className="editor-header-actions">
@@ -175,17 +176,17 @@ export function ProjectEditorPage() {
               disabled={publishing || saving}
             >
               {publishing
-                ? "Working…"
+                ? "Обработка…"
                 : project.status === "PUBLISHED"
-                  ? "Unpublish"
-                  : "Publish"}
+                  ? "Скрыть"
+                  : "Опубликовать"}
             </Button>
           )}
           <Button onClick={handleSaveAndTech} disabled={saving || publishing}>
-            {saving ? "Saving…" : "Save"}
+            {saving ? "Сохранение…" : "Сохранить"}
           </Button>
           <Link to="/dashboard/projects" className="btn btn-ghost">
-            Close
+            Закрыть
           </Link>
         </div>
       </div>
@@ -195,13 +196,13 @@ export function ProjectEditorPage() {
           className={`editor-tab ${tab === "edit" ? "active" : ""}`}
           onClick={() => setTab("edit")}
         >
-          Edit
+          Редактирование
         </button>
         <button
           className={`editor-tab ${tab === "preview" ? "active" : ""}`}
           onClick={() => setTab("preview")}
         >
-          Preview
+          Предпросмотр
         </button>
       </div>
 
@@ -218,8 +219,8 @@ export function ProjectEditorPage() {
           {error && <div className="error-banner">{error}</div>}
 
           <section className="card card-pad editor-section">
-            <h3>Basics</h3>
-            <Field label="Project title" error={validation.title}>
+            <h3>Основное</h3>
+            <Field label="Название проекта" error={validation.title}>
               <Input
                 value={project?.title ?? ""}
                 onChange={(e) => setField("title", e.target.value as Project["title"])}
@@ -228,77 +229,77 @@ export function ProjectEditorPage() {
                 invalid={!!validation.title}
               />
             </Field>
-            <Field label="Short description" hint="One sentence — shown on the portfolio card">
+            <Field label="Краткое описание" hint="одно предложение — показывается на карточке">
               <Input
                 value={project?.short_description ?? ""}
                 onChange={(e) => setField("short_description", e.target.value)}
-                placeholder="CRM system for Telegram-based businesses."
+                placeholder="CRM-система для бизнеса в Telegram."
                 maxLength={300}
               />
             </Field>
           </section>
 
           <section className="card card-pad editor-section">
-            <h3>Case study</h3>
-            <Field label="Problem" hint="What problem did this project solve?">
+            <h3>Кейс</h3>
+            <Field label="Проблема" hint="какую проблему решал проект?">
               <Textarea
                 value={project?.problem ?? ""}
                 onChange={(e) => setField("problem", e.target.value)}
-                placeholder="Businesses were managing leads manually in chats and losing requests."
+                placeholder="Заявки терялись в переписках, менеджеры отвечали с задержкой в часы."
                 rows={4}
               />
             </Field>
-            <Field label="Solution" hint="How was the problem solved?">
+            <Field label="Решение" hint="как проблема была решена?">
               <Textarea
                 value={project?.solution ?? ""}
                 onChange={(e) => setField("solution", e.target.value)}
-                placeholder="Built a centralized CRM with Telegram bot integration for lead capture."
+                placeholder="Разработал CRM с ботом для приёма заявок и уведомлениями менеджерам."
                 rows={4}
               />
             </Field>
             <div className="form-grid">
-              <Field label="My role">
+              <Field label="Моя роль">
                 <Input
                   value={project?.role ?? ""}
                   onChange={(e) => setField("role", e.target.value)}
-                  placeholder="Full-Stack Developer"
+                  placeholder="Full-Stack разработчик"
                   maxLength={120}
                 />
               </Field>
-              <Field label="Result" hint="What was achieved?">
+              <Field label="Результат" hint="чего удалось достичь?">
                 <Input
                   value={project?.result ?? ""}
                   onChange={(e) => setField("result", e.target.value)}
-                  placeholder="Automated lead management, response time cut in half."
+                  placeholder="Заявки перестали теряться, время ответа сократилось вдвое."
                 />
               </Field>
             </div>
-            <Field label="Features" hint="What was implemented? One per line.">
+            <Field label="Функции" hint="что было реализовано? по одному пункту на строку.">
               <Textarea
                 value={project?.features ?? ""}
                 onChange={(e) => setField("features", e.target.value)}
-                placeholder={"Lead capture bot\nDeals pipeline\nNotifications"}
+                placeholder={"Бот приёма заявок\nВоронка сделок\nУведомления менеджерам"}
                 rows={3}
               />
             </Field>
           </section>
 
           <section className="card card-pad editor-section">
-            <h3>Tech stack</h3>
+            <h3>Технологии</h3>
             <TechSelect
               technologies={technologies}
               selectedIds={selectedTechIds}
               onChange={setSelectedTechIds}
             />
             <p className="field-hint">
-              Press “Save” to apply the selected technologies to the project.
+              Нажмите «Сохранить», чтобы применить выбранные технологии к проекту.
             </p>
           </section>
 
           <section className="card card-pad editor-section">
-            <h3>Links</h3>
+            <h3>Ссылки</h3>
             <div className="form-grid">
-              <Field label="Live demo URL" error={validation.live_url}>
+              <Field label="Live Demo (работающий проект)" error={validation.live_url}>
                 <Input
                   type="url"
                   value={project?.live_url ?? ""}
@@ -307,7 +308,7 @@ export function ProjectEditorPage() {
                   invalid={!!validation.live_url}
                 />
               </Field>
-              <Field label="GitHub URL" error={validation.github_url}>
+              <Field label="Ссылка на исходный код" error={validation.github_url}>
                 <Input
                   type="url"
                   value={project?.github_url ?? ""}
@@ -329,13 +330,13 @@ export function ProjectEditorPage() {
 
           <div className="form-actions editor-footer">
             <Button type="submit" size="lg" disabled={saving}>
-              {saving ? "Saving…" : isNew ? "Create project" : "Save changes"}
+              {saving ? "Сохранение…" : isNew ? "Создать проект" : "Сохранить изменения"}
             </Button>
             {project && (
               <span className="field-hint">
                 {project.status === "PUBLISHED"
-                  ? "This project is visible on your public page."
-                  : "Draft — visible only to you until you publish."}
+                  ? "Проект виден на вашей публичной странице."
+                  : "Черновик — виден только вам, пока не опубликуете."}
               </span>
             )}
           </div>

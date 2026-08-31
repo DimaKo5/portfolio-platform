@@ -14,7 +14,7 @@ export function ConfirmDialog({
   open,
   title,
   description,
-  confirmLabel = "Delete",
+  confirmLabel = "Удалить",
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
@@ -36,7 +36,7 @@ export function ConfirmDialog({
         <p>{description}</p>
         <div className="modal-actions">
           <Button variant="secondary" onClick={onCancel}>
-            Cancel
+            Отмена
           </Button>
           <Button variant="danger" onClick={onConfirm}>
             {confirmLabel}
