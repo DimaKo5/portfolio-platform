@@ -389,10 +389,27 @@
 
 .project-row {
   display: grid;
-  grid-template-columns: 96px 1fr auto;
+  grid-template-columns: auto 96px 1fr auto;
   gap: var(--space-4);
   padding: var(--space-4);
   align-items: center;
+}
+
+.drag-handle {
+  color: var(--color-border-strong);
+  cursor: grab;
+  font-size: var(--text-lg);
+  user-select: none;
+  padding: var(--space-2);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.project-row.dragging {
+  opacity: 0.45;
+  border-style: dashed;
 }
 
 .project-row-cover {
@@ -1067,6 +1084,10 @@
 
   .project-row {
     grid-template-columns: 1fr;
+  }
+
+  .drag-handle {
+    display: none;
   }
 
   .project-row-cover {

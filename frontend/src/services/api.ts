@@ -43,6 +43,10 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
   if (!response.ok) {
     const payload = data as ApiErrorPayload | null;
+    if (response.status === 401 && localStorage.getItem("token")) {
+      localStorage.removeItem("token");
+      window.dispatchEvent(new Event("auth:expired"));
+    }
     throw new ApiError(
       payload?.error?.code ?? "REQUEST_FAILED",
       payload?.error?.message ?? "Что-то пошло не так. Попробуйте ещё раз.",

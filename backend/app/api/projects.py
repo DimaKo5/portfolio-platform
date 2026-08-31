@@ -18,10 +18,12 @@ router = APIRouter(prefix="/projects", tags=["projects"])
 
 @router.get("", response_model=ProjectListResponse)
 def list_projects(
+    page: int | None = None,
+    limit: int | None = None,
     current_user: User = Depends(get_current_user),
     service: ProjectService = Depends(),
 ) -> ProjectListResponse:
-    return service.list_projects(current_user.id)
+    return service.list_projects(current_user.id, page, limit)
 
 
 @router.post("", response_model=ProjectResponse, status_code=201)

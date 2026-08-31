@@ -12,6 +12,7 @@ import { ProfilePage } from "../pages/ProfilePage";
 import { ProjectsPage } from "../pages/ProjectsPage";
 import { ProjectEditorPage } from "../pages/ProjectEditorPage";
 import { PortfolioSettingsPage } from "../pages/PortfolioSettingsPage";
+import { SettingsPage } from "../pages/SettingsPage";
 import { PublicPortfolioPage } from "../pages/PublicPortfolioPage";
 import { PublicProjectPage } from "../pages/PublicProjectPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
@@ -31,6 +32,7 @@ export function AppRoutes() {
           <Route path="projects/new" element={<ProjectEditorPage />} />
           <Route path="projects/:projectId" element={<ProjectEditorPage />} />
           <Route path="portfolio" element={<PortfolioSettingsPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Route>
 

@@ -9,6 +9,12 @@ export const authApi = {
     api.post<AuthResponse>("/auth/login", { email, password }),
 
   me: () => api.get<User>("/auth/me"),
+
+  changePassword: (currentPassword: string, newPassword: string) =>
+    api.put<void>("/auth/password", {
+      current_password: currentPassword,
+      new_password: newPassword,
+    }),
 };
 
 export function saveToken(token: string) {

@@ -35,6 +35,12 @@ class AuthService:
             raise AppError("INVALID_CREDENTIALS", "Неверный email или пароль.", 401)
         return self._token_response(user)
 
+    def change_password(self, user: User, current_password: str, new_password: str) -> None:
+        if not verify_password(current_password, user.password_hash):
+            raise AppError("INVALID_CREDENTIALS", "Текущий пароль указан неверно.", 400)
+        user.password_hash = hash_password(new_password)
+        self.repo.save(user)
+
     def _token_response(self, user: User) -> TokenResponse:
         return TokenResponse(
             access_token=create_access_token(user.id),

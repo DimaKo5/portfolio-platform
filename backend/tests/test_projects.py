@@ -88,6 +88,18 @@ class TestProjectCRUD:
         assert data["total"] == 1
         assert data["items"][0]["title"] == "My Project A"
 
+    def test_list_projects_pagination(self, client, auth_headers):
+        for i in range(5):
+            create_project(client, auth_headers, title=f"Paginated {i}")
+        response = client.get("/api/v1/projects?page=1&limit=2", headers=auth_headers)
+        data = response.json()
+        assert data["total"] == 5
+        assert len(data["items"]) == 2
+        assert data["page"] == 1 and data["limit"] == 2
+        response = client.get("/api/v1/projects?page=3&limit=2", headers=auth_headers)
+        data = response.json()
+        assert len(data["items"]) == 1
+
 
 class TestSlug:
     def test_slug_cyrillic_title(self, client, auth_headers):

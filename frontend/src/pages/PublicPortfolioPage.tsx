@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { ErrorBanner } from "../components/ui/ErrorBanner";
+import { useSeo } from "../hooks/useSeo";
 import { ApiError } from "../services/api";
 import { portfolioApi } from "../services/portfolio";
 import type { PublicPortfolio } from "../types";
@@ -33,16 +34,13 @@ export function PublicPortfolioPage() {
       .finally(() => setLoading(false));
   }, [username]);
 
-  useEffect(() => {
-    if (portfolio) {
-      document.title = portfolio.profile.display_name
-        ? `${portfolio.profile.display_name} — Портфолио`
-        : `@${portfolio.username} — Портфолио`;
-    }
-    return () => {
-      document.title = "Portfolio Platform — покажите реальные работы";
-    };
-  }, [portfolio]);
+  useSeo({
+    title: portfolio
+      ? `${portfolio.profile.display_name ?? `@${portfolio.username}`} — Портфолио`
+      : "Портфолио — Portfolio Platform",
+    description: portfolio?.profile.bio ?? null,
+    image: portfolio?.profile.avatar_url ?? null,
+  });
 
   if (loading) {
     return (

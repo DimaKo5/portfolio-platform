@@ -1,9 +1,15 @@
 import { Link } from "react-router-dom";
 
 import { useAuth } from "../hooks/useAuth";
+import { useSeo } from "../hooks/useSeo";
 
 export function LandingPage() {
   const { user } = useAuth();
+  useSeo({
+    title: "Portfolio Platform — покажите реальные работы",
+    description:
+      "Создайте профессиональное портфолио с реальными проектами: Проблема, Решение, Результат, Технологии. Одна ссылка для работодателей и клиентов.",
+  });
 
   return (
     <div className="landing">

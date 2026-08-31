@@ -20,11 +20,24 @@ class ProjectService:
     def __init__(self, db: Session = Depends(get_db)):
         self.repo = ProjectRepository(db)
 
-    def list_projects(self, user_id: uuid.UUID) -> ProjectListResponse:
-        projects = self.repo.list_by_user(user_id)
+    def list_projects(
+        self,
+        user_id: uuid.UUID,
+        page: int | None = None,
+        limit: int | None = None,
+    ) -> ProjectListResponse:
+        if page is not None and limit is not None:
+            offset = (page - 1) * limit
+            projects = self.repo.list_by_user(user_id, limit=limit, offset=offset)
+            total = self.repo.count_by_user(user_id)
+        else:
+            projects = self.repo.list_by_user(user_id)
+            total = len(projects)
         return ProjectListResponse(
             items=[ProjectResponse.model_validate(p) for p in projects],
-            total=len(projects),
+            total=total,
+            page=page,
+            limit=limit,
         )
 
     def get_project(self, user_id: uuid.UUID, project_id: uuid.UUID) -> ProjectResponse:

@@ -24,12 +24,21 @@ class ProjectRepository:
             self._query().where(Project.id == project_id, Project.user_id == user_id)
         )
 
-    def list_by_user(self, user_id: uuid.UUID) -> list[Project]:
+    def list_by_user(
+        self,
+        user_id: uuid.UUID,
+        limit: int | None = None,
+        offset: int | None = None,
+    ) -> list[Project]:
         stmt = (
             self._query()
             .where(Project.user_id == user_id)
             .order_by(Project.sort_order, Project.created_at)
         )
+        if limit is not None:
+            stmt = stmt.limit(limit)
+        if offset is not None:
+            stmt = stmt.offset(offset)
         return list(self.db.scalars(stmt).all())
 
     def list_published_by_user(self, user_id: uuid.UUID) -> list[Project]:

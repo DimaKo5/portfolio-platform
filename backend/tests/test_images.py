@@ -61,6 +61,23 @@ class TestImageUpload:
         )
         assert response.status_code == 404
 
+    def test_image_limit_enforced(self, client, auth_headers):
+        from app.api.images import MAX_PROJECT_IMAGES
+
+        created = create_project(client, auth_headers)
+        for _ in range(MAX_PROJECT_IMAGES):
+            response = client.post(
+                f"/api/v1/projects/{created['id']}/images",
+                files=png_file(),
+                headers=auth_headers,
+            )
+            assert response.status_code == 201
+        response = client.post(
+            f"/api/v1/projects/{created['id']}/images", files=png_file(), headers=auth_headers
+        )
+        assert response.status_code == 400
+        assert response.json()["error"]["code"] == "IMAGE_LIMIT_REACHED"
+
 
 class TestAvatar:
     def test_upload_avatar(self, client, auth_headers):

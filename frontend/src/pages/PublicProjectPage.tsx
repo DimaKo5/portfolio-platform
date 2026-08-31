@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 
 import { ErrorBanner } from "../components/ui/ErrorBanner";
 import { TechBadge } from "../components/ui/TechBadge";
+import { useSeo } from "../hooks/useSeo";
 import { ApiError } from "../services/api";
 import { portfolioApi } from "../services/portfolio";
 import type { PublicProject } from "../types";
@@ -27,14 +28,11 @@ export function PublicProjectPage() {
       .finally(() => setLoading(false));
   }, [username, slug]);
 
-  useEffect(() => {
-    if (data) {
-      document.title = `${data.project.title} — ${data.username}`;
-    }
-    return () => {
-      document.title = "Portfolio Platform — покажите реальные работы";
-    };
-  }, [data]);
+  useSeo({
+    title: data ? `${data.project.title} — ${data.username}` : "Проект — Portfolio Platform",
+    description: data?.project.short_description ?? null,
+    image: data?.project.cover_image_url ?? null,
+  });
 
   if (loading) {
     return (

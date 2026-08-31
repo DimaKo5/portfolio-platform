@@ -7,6 +7,7 @@ const navItems = [
   { to: "/dashboard/profile", label: "Профиль" },
   { to: "/dashboard/projects", label: "Проекты" },
   { to: "/dashboard/portfolio", label: "Портфолио" },
+  { to: "/dashboard/settings", label: "Настройки" },
 ];
 
 export function DashboardLayout() {

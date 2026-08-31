@@ -13,6 +13,8 @@ from app.utils.images import delete_image_file, save_image
 
 router = APIRouter(prefix="/projects", tags=["images"])
 
+MAX_PROJECT_IMAGES = 10
+
 
 @router.post("/{project_id}/images", response_model=ProjectImageSchema, status_code=201)
 async def upload_project_image(
@@ -25,6 +27,12 @@ async def upload_project_image(
     project = repo.get_by_id_and_user(project_id, current_user.id)
     if not project:
         raise AppError("PROJECT_NOT_FOUND", "Проект не найден.", 404)
+    if len(project.images) >= MAX_PROJECT_IMAGES:
+        raise AppError(
+            "IMAGE_LIMIT_REACHED",
+            f"Максимум {MAX_PROJECT_IMAGES} изображений на проект.",
+            400,
+        )
     url = await save_image(file)
     try:
         image = repo.add_image(project, url, None)

@@ -99,3 +99,42 @@ class TestLogin:
             "/api/v1/auth/me", headers={"Authorization": f"Bearer {uuid.uuid4().hex}"}
         )
         assert response.status_code == 401
+
+
+class TestPasswordChange:
+    def test_change_password(self, client, auth_headers):
+        response = client.put(
+            "/api/v1/auth/password",
+            headers=auth_headers,
+            json={"current_password": "strongpass123", "new_password": "newpass12345"},
+        )
+        assert response.status_code == 204
+        response = client.post(
+            "/api/v1/auth/login",
+            json={"email": "owner@example.com", "password": "newpass12345"},
+        )
+        assert response.status_code == 200
+
+    def test_change_password_wrong_current(self, client, auth_headers):
+        response = client.put(
+            "/api/v1/auth/password",
+            headers=auth_headers,
+            json={"current_password": "wrongpass", "new_password": "newpass12345"},
+        )
+        assert response.status_code == 400
+        assert response.json()["error"]["code"] == "INVALID_CREDENTIALS"
+
+    def test_change_password_short_new(self, client, auth_headers):
+        response = client.put(
+            "/api/v1/auth/password",
+            headers=auth_headers,
+            json={"current_password": "strongpass123", "new_password": "short"},
+        )
+        assert response.status_code == 422
+
+    def test_change_password_requires_auth(self, client):
+        response = client.put(
+            "/api/v1/auth/password",
+            json={"current_password": "a12345678", "new_password": "b12345678"},
+        )
+        assert response.status_code == 401

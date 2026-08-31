@@ -68,6 +68,8 @@ class ProjectResponse(BaseModel):
 class ProjectListResponse(BaseModel):
     items: list[ProjectResponse]
     total: int
+    page: int | None = None
+    limit: int | None = None
 
 
 class ProjectReorderRequest(BaseModel):

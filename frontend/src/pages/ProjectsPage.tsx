@@ -18,6 +18,7 @@ export function ProjectsPage() {
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<Project | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
 
   const load = () => {
     setLoading(true);
@@ -31,11 +32,7 @@ export function ProjectsPage() {
 
   useEffect(load, []);
 
-  const move = async (index: number, direction: -1 | 1) => {
-    const next = [...projects];
-    const target = index + direction;
-    if (target < 0 || target >= next.length) return;
-    [next[index], next[target]] = [next[target], next[index]];
+  const commitOrder = async (next: Project[]) => {
     setProjects(next);
     try {
       await projectsApi.reorder(next.map((p) => p.id));
@@ -43,6 +40,26 @@ export function ProjectsPage() {
       showError("Не удалось сохранить новый порядок");
       load();
     }
+  };
+
+  const move = async (index: number, direction: -1 | 1) => {
+    const next = [...projects];
+    const target = index + direction;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    await commitOrder(next);
+  };
+
+  const handleDrop = async (target: number) => {
+    if (dragIndex === null || dragIndex === target) {
+      setDragIndex(null);
+      return;
+    }
+    const next = [...projects];
+    const [moved] = next.splice(dragIndex, 1);
+    next.splice(target, 0, moved);
+    setDragIndex(null);
+    await commitOrder(next);
   };
 
   const togglePublish = async (project: Project) => {
@@ -115,7 +132,21 @@ export function ProjectsPage() {
       ) : (
         <div className="project-list">
           {projects.map((project, index) => (
-            <div key={project.id} className="card project-row">
+            <div
+              key={project.id}
+              className={`card project-row ${dragIndex === index ? "dragging" : ""}`}
+              draggable
+              onDragStart={(e) => {
+                setDragIndex(index);
+                e.dataTransfer.effectAllowed = "move";
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={() => void handleDrop(index)}
+              onDragEnd={() => setDragIndex(null)}
+            >
+              <span className="drag-handle" aria-hidden="true">
+                ⠿
+              </span>
               <div className="project-row-cover">
                 {project.cover_image_url ? (
                   <img src={project.cover_image_url} alt="" />
