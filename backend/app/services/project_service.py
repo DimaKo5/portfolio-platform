@@ -87,10 +87,15 @@ class ProjectService:
         return ProjectResponse.model_validate(project)
 
     def reorder_projects(self, user_id: uuid.UUID, ordered_ids: list[uuid.UUID]) -> None:
-        owned = {p.id for p in self.repo.list_by_user(user_id)}
-        if not set(ordered_ids).issubset(owned):
+        owned = self.repo.list_by_user(user_id)
+        owned_ids = {p.id for p in owned}
+        if not set(ordered_ids).issubset(owned_ids):
             raise AppError("PROJECT_ACCESS_DENIED", "В списке есть проекты, которые вам не принадлежат.", 400)
-        self.repo.reorder(user_id, ordered_ids)
+        # Projects not mentioned in the request keep their relative order
+        # but are renumbered after the specified ones to avoid sort collisions.
+        requested = set(ordered_ids)
+        remaining = [p.id for p in owned if p.id not in requested]
+        self.repo.reorder(user_id, list(ordered_ids) + remaining)
 
     def _get_owned(self, user_id: uuid.UUID, project_id: uuid.UUID) -> Project:
         project = self.repo.get_by_id_and_user(project_id, user_id)

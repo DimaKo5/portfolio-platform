@@ -174,6 +174,20 @@ class TestReorder:
         )
         assert response.status_code == 400
 
+    def test_reorder_partial_list_renumbers_rest_after(self, client, auth_headers):
+        a = create_project(client, auth_headers, title="A")
+        b = create_project(client, auth_headers, title="B")
+        c = create_project(client, auth_headers, title="C")
+        # Move only C to the front; A and B keep relative order after it.
+        response = client.put(
+            "/api/v1/projects/reorder",
+            headers=auth_headers,
+            json={"project_ids": [c["id"]]},
+        )
+        assert response.status_code == 204
+        titles = [p["title"] for p in client.get("/api/v1/projects", headers=auth_headers).json()["items"]]
+        assert titles == ["C", "A", "B"]
+
     def test_reorder_route_not_swallowed_by_id_param(self, client, auth_headers):
         create_project(client, auth_headers, title="Some Project")
         response = client.put(

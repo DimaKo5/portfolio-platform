@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 
 from app.api.auth import get_current_user
 from app.models import User
@@ -18,8 +18,8 @@ router = APIRouter(prefix="/projects", tags=["projects"])
 
 @router.get("", response_model=ProjectListResponse)
 def list_projects(
-    page: int | None = None,
-    limit: int | None = None,
+    page: int | None = Query(default=None, ge=1),
+    limit: int | None = Query(default=None, ge=1, le=100),
     current_user: User = Depends(get_current_user),
     service: ProjectService = Depends(),
 ) -> ProjectListResponse:
