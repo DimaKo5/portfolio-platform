@@ -16,4 +16,5 @@ RUN mkdir -p uploads
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# $PORT is set by Render; docker-compose leaves it unset -> 8000
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

@@ -102,6 +102,26 @@ cd frontend
 npm test
 ```
 
+## Deployment (free tier)
+
+The project is configured for a free public deployment:
+
+- **Vercel** — frontend (`frontend/vercel.json` proxies `/api` and `/uploads` to the backend)
+- **Render** — backend (Dockerfile, pre-deploy command: `alembic upgrade head`)
+- **Neon** — managed PostgreSQL (free tier)
+
+Environment variables for Render:
+
+```text
+DATABASE_URL   = postgresql+psycopg2://... (Neon connection string)
+JWT_SECRET     = <random 64-hex string>
+CORS_ORIGINS   = https://<your-app>.vercel.app
+```
+
+After deploying Render, replace `REPLACE_WITH_RENDER_URL.onrender.com`
+in `frontend/vercel.json` with your real Render URL, then deploy the
+`frontend/` directory on Vercel.
+
 ## Documentation
 
 Полная документация продукта и архитектуры — в `docs/`.
