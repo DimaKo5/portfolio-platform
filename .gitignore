@@ -20,6 +20,7 @@ venv/
 backend/app.db
 backend/uploads/
 !backend/uploads/.gitkeep
+backend/tests/test_uploads/
 
 # Frontend
 node_modules/
