@@ -136,6 +136,45 @@ class TestRateLimit:
         assert client.get("/api/v1/projects", headers=auth_headers).status_code == 200
 
 
+class TestPasswordStrength:
+    def test_register_common_password_rejected(self, client):
+        response = client.post(
+            "/api/v1/auth/register",
+            json={"email": "weak@example.com", "username": "weakuser", "password": "password"},
+        )
+        assert response.status_code == 422
+        assert "распростран" in response.json()["error"]["message"]
+
+    def test_register_digits_only_rejected(self, client):
+        response = client.post(
+            "/api/v1/auth/register",
+            json={"email": "weak@example.com", "username": "weakuser", "password": "12345678"},
+        )
+        assert response.status_code == 422
+
+    def test_register_letters_only_rejected(self, client):
+        response = client.post(
+            "/api/v1/auth/register",
+            json={"email": "weak@example.com", "username": "weakuser", "password": "abcdefghij"},
+        )
+        assert response.status_code == 422
+
+    def test_register_mixed_password_ok(self, client):
+        response = client.post(
+            "/api/v1/auth/register",
+            json={"email": "ok@example.com", "username": "okuser", "password": "m1xed-pa55w0rd"},
+        )
+        assert response.status_code == 201
+
+    def test_change_to_weak_password_rejected(self, client, auth_headers):
+        response = client.put(
+            "/api/v1/auth/password",
+            headers=auth_headers,
+            json={"current_password": "strongpass123", "new_password": "qwerty123"},
+        )
+        assert response.status_code == 422
+
+
 class TestPasswordChange:
     def test_change_password(self, client, auth_headers):
         response = client.put(

@@ -4,8 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import { Field, Input } from "../components/ui/Field";
 import { PasswordInput } from "../components/ui/PasswordInput";
+import { PasswordStrength } from "../components/ui/PasswordStrength";
 import { ApiError } from "../services/api";
 import { authApi } from "../services/auth";
+import { scorePassword } from "../utils/passwordStrength";
 
 export function ForgotPasswordPage() {
   const navigate = useNavigate();
@@ -45,7 +47,11 @@ export function ForgotPasswordPage() {
     setError(null);
     const errs: Record<string, string> = {};
     if (!/^\d{6}$/.test(code)) errs.code = "Код состоит из 6 цифр.";
-    if (password.length < 8) errs.password = "Пароль должен быть не короче 8 символов.";
+    if (password.length < 8) {
+      errs.password = "Пароль должен быть не короче 8 символов.";
+    } else if (!scorePassword(password).ok) {
+      errs.password = scorePassword(password).hint ?? "Пароль слишком простой.";
+    }
     if (password !== confirm) errs.confirm = "Пароли не совпадают.";
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
@@ -115,13 +121,16 @@ export function ForgotPasswordPage() {
                 />
               </Field>
               <Field label="Новый пароль" error={errors.password}>
-                <PasswordInput
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Минимум 8 символов"
-                  autoComplete="new-password"
-                  invalid={!!errors.password}
-                />
+                <div>
+                  <PasswordInput
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Минимум 8 символов"
+                    autoComplete="new-password"
+                    invalid={!!errors.password}
+                  />
+                  <PasswordStrength password={password} />
+                </div>
               </Field>
               <Field label="Повторите пароль" error={errors.confirm}>
                 <PasswordInput

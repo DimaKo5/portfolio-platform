@@ -5,7 +5,9 @@ import { useAuth } from "../hooks/useAuth";
 import { ApiError } from "../services/api";
 import { Field, Input } from "../components/ui/Field";
 import { PasswordInput } from "../components/ui/PasswordInput";
+import { PasswordStrength } from "../components/ui/PasswordStrength";
 import { Button } from "../components/ui/Button";
+import { scorePassword } from "../utils/passwordStrength";
 
 const USERNAME_RE = /^[a-z0-9][a-z0-9_-]{2,29}$/;
 
@@ -27,7 +29,11 @@ export function RegisterPage() {
       errors.username =
         "3–30 символов: строчные латинские буквы, цифры, дефис или подчёркивание. Без пробелов.";
     }
-    if (password.length < 8) errors.password = "Пароль должен быть не короче 8 символов.";
+    if (password.length < 8) {
+      errors.password = "Пароль должен быть не короче 8 символов.";
+    } else if (!scorePassword(password).ok) {
+      errors.password = scorePassword(password).hint ?? "Пароль слишком простой.";
+    }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -99,6 +105,7 @@ export function RegisterPage() {
               autoComplete="new-password"
               invalid={!!fieldErrors.password}
             />
+            <PasswordStrength password={password} />
           </Field>
           <Button type="submit" size="lg" disabled={submitting} className="auth-submit">
             {submitting ? "Создаём аккаунт…" : "Создать аккаунт"}

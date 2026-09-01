@@ -5,10 +5,12 @@ import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 import { Button } from "../components/ui/Button";
 import { Field, Input } from "../components/ui/Field";
 import { PasswordInput } from "../components/ui/PasswordInput";
+import { PasswordStrength } from "../components/ui/PasswordStrength";
 import { useAuth } from "../hooks/useAuth";
 import { useToast } from "../hooks/useToast";
 import { ApiError } from "../services/api";
 import { authApi, clearToken } from "../services/auth";
+import { scorePassword } from "../utils/passwordStrength";
 
 export function SettingsPage() {
   const { user, refreshUser } = useAuth();
@@ -38,7 +40,11 @@ export function SettingsPage() {
     e.preventDefault();
     const errs: Record<string, string> = {};
     if (!current) errs.current = "Введите текущий пароль.";
-    if (next.length < 8) errs.next = "Новый пароль должен быть не короче 8 символов.";
+    if (next.length < 8) {
+      errs.next = "Новый пароль должен быть не короче 8 символов.";
+    } else if (!scorePassword(next).ok) {
+      errs.next = scorePassword(next).hint ?? "Пароль слишком простой.";
+    }
     if (next !== confirm) errs.confirm = "Пароли не совпадают.";
     setPwErrors(errs);
     if (Object.keys(errs).length > 0) return;
@@ -128,13 +134,16 @@ export function SettingsPage() {
         </Field>
         <div className="form-grid">
           <Field label="Новый пароль" error={pwErrors.next}>
-            <PasswordInput
-              value={next}
-              onChange={(e) => setNext(e.target.value)}
-              placeholder="Минимум 8 символов"
-              autoComplete="new-password"
-              invalid={!!pwErrors.next}
-            />
+            <div>
+              <PasswordInput
+                value={next}
+                onChange={(e) => setNext(e.target.value)}
+                placeholder="Минимум 8 символов"
+                autoComplete="new-password"
+                invalid={!!pwErrors.next}
+              />
+              <PasswordStrength password={next} />
+            </div>
           </Field>
           <Field label="Повторите новый пароль" error={pwErrors.confirm}>
             <PasswordInput

@@ -29,8 +29,12 @@ async def app_error_handler(_: Request, exc: AppError) -> JSONResponse:
 
 async def validation_error_handler(_: Request, exc: RequestValidationError) -> JSONResponse:
     first = exc.errors()[0] if exc.errors() else {}
-    field = ".".join(str(p) for p in first.get("loc", []) if p != "body")
-    message = "Некорректное значение поля." if field else "Некорректные данные запроса."
+    msg = str(first.get("msg", ""))
+    if msg.startswith("Value error, "):
+        message = msg[len("Value error, "):]
+    else:
+        field = ".".join(str(p) for p in first.get("loc", []) if p != "body")
+        message = "Некорректное значение поля." if field else "Некорректные данные запроса."
     return error_response(422, "VALIDATION_ERROR", message)
 
 
